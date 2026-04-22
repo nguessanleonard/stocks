@@ -40,4 +40,21 @@
                 ->where('cl.id', $clients_id)
                 ->exists();
         }
+
+        public static function getclientinconnu($email)
+        {
+            $client = DB::table('clients')
+                ->where('email', $email)
+                ->first();
+
+            if (!$client) {
+                return DB::table('clients')->insertGetId([
+                    'email' => $email,
+                    'noms' => 'Client inconnu',
+                    'supprimer' => 0
+                ]);
+            }
+
+            return $client->id;
+        }
     }

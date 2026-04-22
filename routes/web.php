@@ -32,7 +32,7 @@
         Route::PUT('/produits/modification/{id}', [ProduitsController::class, 'update'])->name('produits.modification');
         Route::post('/produits/confirmer-suppression', [ProduitsController::class, 'confirmersuppression'])->name('produits.confirmer-suppression');
         Route::post('/produits/rechercheCodeorqrcode', [ProduitsController::class, 'rechercheCodeorqrcode'])->name('produits.rechercheCodeorqrcode');
-        Route::post('/produits/rechercheCodeorqrcodevente', [ProduitsController::class, 'rechercheCodeorqrcode'])->name('produits.rechercheCodeorqrcodevente');
+        Route::post('/produits/rechercheCodeorqrcodevente', [ProduitsController::class, 'rechercheCodeorqrcodevente'])->name('produits.rechercheCodeorqrcodevente');
 
 
         //Route Produits prix d'achat
