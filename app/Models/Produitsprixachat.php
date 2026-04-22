@@ -11,9 +11,8 @@
 
         protected $fillable = [
 
-            'libelle',
-            'anneesmois_id',
-            'fournisseurs_id',
+            'produits_id',
+            'prixachats_id',
             'userAdd',
             'userUpdate',
             'userDelete',
@@ -26,14 +25,26 @@
         public static function produitsprixachats()
         {
             return DB::table('produitsprixachats as ppa')
-                ->join('prixachats as pa', 'ppa.prixachats_id', 'pa.id')
-                ->join('produits as p', 'ppa.produits_id', 'p.id')
+                ->join('prixachats as pa', 'ppa.prixachats_id', '=', 'pa.id')
+                ->join('produits as p', 'ppa.produits_id', '=', 'p.id')
                 ->where('ppa.statut', 1)
                 ->orderBy('p.libelle')
-                ->select('p.libelle as produit,
-                p.code,p.photo,
-                pa.montant,pa.id as prixachats_id,
-                ppa.id as produitsprixachats_id')
+                ->select([
+                    'p.libelle as produit',
+                    'p.code',
+                    'p.photo',
+                    'pa.montant',
+                    'pa.id as prixachats_id',
+                    'ppa.id as produitsprixachats_id'
+                ])
                 ->get();
+        }
+
+        public static function existeproduitprixachat($produits_id)
+        {
+            return DB::table('produitsprixachats as ppa')
+                ->where('ppa.produits_id', $produits_id)
+                ->where('ppa.statut', 1)
+                ->first();
         }
     }

@@ -197,6 +197,7 @@
 
             $infosproduit = null;
 
+
             if ($request->qr_code) {
 
                 $infosproduit = Produit::infosproduit($request->qr_code);
@@ -212,6 +213,10 @@
                     'id' => $infosproduit->id,
                     'libelle' => $infosproduit->libelle,
                     'code' => $infosproduit->code,
+                    'prix' => $infosproduit->montant,
+                    'prixachats_id' => $infosproduit->prixachats_id,
+                    'produits_id' => $infosproduit->id,
+                    'produitsprixachats_id' => $infosproduit->produitsprixachats_id,
                     'photo' => $infosproduit->photo,
                 ]);
             }

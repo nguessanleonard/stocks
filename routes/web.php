@@ -1,6 +1,7 @@
 <?php
 
-    use App\Http\Controllers\ApprovisonnementsController;
+    use App\Http\Controllers\ApprovisionnementsController;
+    use App\Http\Controllers\ClientsController;
     use App\Http\Controllers\ConnexionController;
     use App\Http\Controllers\FournisseursController;
     use App\Http\Controllers\ProduitsController;
@@ -43,10 +44,18 @@
         Route::get('/fournisseurs/liste', [FournisseursController::class, 'liste'])->name('fournisseurs.liste');
 
         //Route Approvisonnements
-        Route::get('/approvisonnements', [ApprovisonnementsController::class, 'index'])->name('approvisonnements.index');
-        Route::post('/approvisonnements/ajouter', [ProduitsController::class, 'ajouter'])->name('approvisonnements.ajouter');
-        Route::PUT('/approvisonnements/modification/{id}', [ProduitsController::class, 'update'])->name('approvisonnements.modification');
-        Route::post('/approvisonnements/confirmer-suppression', [ProduitsController::class, 'confirmersuppression'])->name('approvisonnements.confirmer-suppression');
+        Route::get('/approvisionnements', [ApprovisionnementsController::class, 'index'])->name('approvisionnements.index');
+        Route::post('/approvisionnements/ajouter', [ApprovisionnementsController::class, 'ajouter'])->name('approvisionnements.ajouter');
+        Route::PUT('/approvisionnements/modification/{id}', [ApprovisionnementsController::class, 'update'])->name('approvisionnements.modification');
+        Route::post('/approvisionnements/confirmer-suppression', [ApprovisionnementsController::class, 'confirmersuppression'])->name('approvisionnements.confirmer-suppression');
+
+
+        //Route Fournisseurs
+        Route::get('/clients', [ClientsController::class, 'index'])->name('clients.index');
+        Route::post('/clients/ajouter', [ClientsController::class, 'ajouter'])->name('clients.ajouter');
+        Route::PUT('/clients/modification/{id}', [ClientsController::class, 'update'])->name('clients.modification');
+        Route::post('/clients/confirmer-suppression', [ClientsController::class, 'confirmersuppression'])->name('clients.confirmer-suppression');
+        Route::get('/clients/liste', [ClientsController::class, 'liste'])->name('clients.liste');
 
         Route::get('se-déconnecter', [ConnexionController::class, 'logout'])->name('logout');
     });

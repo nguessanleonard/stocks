@@ -39,8 +39,20 @@
         {
 
             return DB::table('produits as p')
+                ->join('produitsprixachats as ppa', 'ppa.produits_id', 'p.id')
+                ->join('prixachats as pa', 'ppa.prixachats_id', '=', 'pa.id')
                 ->where('p.supprimer', 0)
                 ->where('p.code', $code)
+                ->where('ppa.statut', 1)
+                ->select([
+                    'p.id',
+                    'p.libelle',
+                    'p.code',
+                    'p.photo',
+                    'pa.montant',
+                    'pa.id as prixachats_id',
+                    'ppa.id as produitsprixachats_id'
+                ])
                 ->first();
         }
 
@@ -53,5 +65,23 @@
                 ->where('p.supprimer', 0)
                 ->where('p.id', $produits_id)
                 ->exists();
+        }
+        public static function getproduits_id2($produitsprixachats_id)
+        {
+            return DB::table('produits as p')
+                ->join('produitsprixachats as ppa', 'ppa.produits_id', 'p.id')
+                ->where('p.supprimer', 0)
+                ->where('ppa.statut', 1)
+                ->where('ppa.id', $produitsprixachats_id)
+                ->select('p.*')
+                ->first();
+        }
+        public static function getproduits_id($produitsprixachats_id)
+        {
+            return DB::table('produitsprixachats as ppa')
+                ->join('produits as p', 'p.id', '=', 'ppa.produits_id')
+                ->where('ppa.id', $produitsprixachats_id)
+                ->select('p.id', 'p.quantite')
+                ->first();
         }
     }

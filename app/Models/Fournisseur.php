@@ -12,6 +12,8 @@ class Fournisseur extends Model
     protected $fillable = [
 
         'libelle',
+        'telephone',
+        'email',
         'logo',
         'userAdd',
         'userUpdate',

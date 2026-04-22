@@ -102,6 +102,25 @@
                                                 </div>
 
                                             </div>
+                                            <div class="form-row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label" for="validationTooltip02">Téléphone <span
+                                                            class="text-danger"></span> </label>
+                                                    <input type="text" class="form-control" id="telephone"
+                                                           name="telephone"
+                                                           placeholder="Entrez le numéro de téléphone du Fournisseur">
+
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label" for="validationTooltip03">L'adresse
+                                                        électronique <span
+                                                            class="text-danger"></span> </label>
+                                                    <input type="email" class="form-control" id="email" name="email"
+                                                           placeholder="Entrez L'adresse électronique du Fournisseur">
+
+                                                </div>
+
+                                            </div>
 
                                             <div class="form-row">
                                                 <div class="col-md-6">
@@ -162,6 +181,7 @@
                                                     <tr>
                                                         <th>N°</th>
                                                         <th>Libelle</th>
+                                                        <th>Contacts</th>
                                                         <th>Logo</th>
                                                         <th>#</th>
                                                     </tr>
@@ -175,6 +195,7 @@
                                                             <td>{{ $i++  }}</td>
 
                                                             <td>{{ $fournisseur->libelle }}</td>
+                                                            <td>{{ $fournisseur->telephone .'  ('.$fournisseur->email.')'}}</td>
                                                             <td class="text-center">
                                                                 <img src="{{ $fournisseur->logo }}"
                                                                      class="img-fluid img-thumbnail zoom-click"
@@ -186,6 +207,8 @@
                                                                 <a href="#" class="btnModifierFournisseur"
                                                                    data-id="{{ $fournisseur->id }}"
                                                                    data-libelle="{{ $fournisseur->libelle }}"
+                                                                   data-telephone="{{ $fournisseur->telephone }}"
+                                                                   data-email="{{ $fournisseur->email }}"
 
                                                                    data-logo="{{ $fournisseur->logo }}"
                                                                 >
@@ -264,6 +287,16 @@
                     <div class="form-group">
                         <label>Libelle</label>
                         <input type="text" id="libelle_modif" name="libelle"
+                               class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="text" id="telephone_modif" name="telephone"
+                               class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Adresse électronique</label>
+                        <input type="text" id="email_modif" name="email"
                                class="form-control">
                     </div>
 
@@ -481,10 +514,14 @@
 
             let id = $(this).data('id');
             let libelle = $(this).data('libelle');
+            let telephone = $(this).data('telephone');
+            let email = $(this).data('email');
             let image = $(this).data('logo');
 
             $('#fournisseurs_id').val(id);
             $('#libelle_modif').val(libelle);
+            $('#telephone_modif').val(telephone);
+            $('#email_modif').val(email);
 
 
             if (image) {

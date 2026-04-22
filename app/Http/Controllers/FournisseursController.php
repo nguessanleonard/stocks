@@ -34,12 +34,13 @@
                 [
                     'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
                     'libelle' => 'required|string|unique:fournisseurs,libelle',
+                    'telephone' => 'nullable|string',
+                    'email' => 'nullable|string',
 
                 ],
                 [
                     'libelle.required' => 'Le champ libellé est obligatoire.',
                     'libelle.unique' => 'Ce nom existe déjà pour un autre fournisseur.',
-
                     'image.image' => 'Le fichier doit être une image.',
                     'image.mimes' => 'L’image doit être au format jpg, jpeg, png, gif ou webp.',
                     'image.max' => 'L’image ne doit pas dépasser 2 Mo.',
@@ -65,6 +66,8 @@
 
             $dataFournisseur = [
                 'libelle' => mb_strtoupper($data['libelle']),
+                'telephone' => $data['telephone'],
+                'email' => mb_strtolower($data['email']),
                 'logo' => $imageBase64,
                 'userAdd' => Auth::id(),
             ];
@@ -83,6 +86,8 @@
                 $request->all(),
                 [
                     'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+                    'telephone' => 'nullable|string',
+                    'email' => 'nullable|string',
 
                     'libelle' => [
                         'required',
@@ -119,6 +124,8 @@
 
             $dataFournisseur = [
                 'libelle' => mb_strtoupper($data['libelle']),
+                'telephone' => $data['telephone'],
+                'email' => mb_strtolower($data['email']),
                 'userUpdate' => Auth::id(),
                 'updated_at' => Carbon::now(),
             ];

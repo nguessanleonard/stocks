@@ -61,10 +61,10 @@
                     </li>
                     <li>
 
-                        <a href="{{route('approvisonnements.index')}}" title="Approvisonnements" class=" "
-                           data-filter-tags="Approvisonnements des produits">
+                        <a href="{{route('approvisionnements.index')}}" title="Approvisionnements" class=" "
+                           data-filter-tags="Approvisionnements des produits">
 
-                            <span class="nav-link-text" data-i18n="nav.application_intel_marketing_dashboard">Approvisonnements</span>
+                            <span class="nav-link-text" data-i18n="nav.application_intel_marketing_dashboard">Approvisionnements</span>
                         </a>
 
 
@@ -78,13 +78,14 @@
                                   data-i18n="nav.application_intel_introduction">Fournisseurs</span>
                         </a>
 
-
                     </li>
                     <li>
 
-                        <a href="#" title="Privacy" class=" " data-filter-tags="application intel privacy">
+                        <a href="{{route('produitsprixachats.index')}}" title="Prix d'achat produit" class=" "
+                           data-filter-tags="application intel privacy">
 
-                            <span class="nav-link-text" data-i18n="nav.application_intel_privacy">Privacy</span>
+                            <span class="nav-link-text"
+                                  data-i18n="nav.application_intel_privacy">Prix d'achat produit</span>
                         </a>
 
 
@@ -114,7 +115,7 @@
 
                     <li>
 
-                        <a href="" title="How it works" class=" " data-filter-tags="theme settings how it works">
+                        <a href="#" title="How it works" class=" " data-filter-tags="theme settings how it works">
 
                             <span class="nav-link-text" data-i18n="nav.theme_settings_how_it_works">How it works</span>
                         </a>
@@ -156,18 +157,18 @@
             </li>
             <li>
 
-                <a href="#" title="Package Info" class=" " data-filter-tags="package info">
+                <a href="" title="Clients" class=" " data-filter-tags="package info">
                     <i class="fal fa-tag"></i>
-                    <span class="nav-link-text" data-i18n="nav.package_info">Package Info</span>
+                    <span class="nav-link-text" data-i18n="nav.package_info">Commandes/ventes</span>
                 </a>
 
                 <ul>
 
                     <li>
 
-                        <a href="#" title="Documentation" class=" " data-filter-tags="package info documentation">
+                        <a href="{{route('clients.index')}}" title="Clients" class=" " data-filter-tags="package info documentation">
 
-                            <span class="nav-link-text" data-i18n="nav.package_info_documentation">Documentation</span>
+                            <span class="nav-link-text" data-i18n="nav.package_info_documentation">Clients</span>
                         </a>
 
 

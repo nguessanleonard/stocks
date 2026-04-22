@@ -27,4 +27,10 @@
                 ->orderBy('pa.montant')
                 ->get();
         }
+        public static function getprixachats($montant)
+        {
+            return DB::table('prixachats as pa')
+              ->where('pa.montant',$montant)
+                ->first();
+        }
     }
