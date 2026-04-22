@@ -166,7 +166,8 @@
 
                     <li>
 
-                        <a href="{{route('clients.index')}}" title="Clients" class=" " data-filter-tags="package info documentation">
+                        <a href="{{route('clients.index')}}" title="Clients" class=" "
+                           data-filter-tags="package info documentation">
 
                             <span class="nav-link-text" data-i18n="nav.package_info_documentation">Clients</span>
                         </a>
@@ -175,22 +176,22 @@
                     </li>
                     <li>
 
-                        <a href="#" title="Product Licensing" class=" "
+                        <a href="{{route('produitsprixaventes.index')}}" title="Prix de vente produit" class=" "
                            data-filter-tags="package info product licensing">
 
                             <span class="nav-link-text"
-                                  data-i18n="nav.package_info_product_licensing">Product Licensing</span>
+                                  data-i18n="nav.package_info_product_licensing">Prix de vente produit</span>
                         </a>
 
 
                     </li>
                     <li>
 
-                        <a href="#" title="Different Flavors" class=" "
+                        <a href="{{route('commandes.index')}}" title="Commandes" class=" "
                            data-filter-tags="package info different flavors">
 
                             <span class="nav-link-text"
-                                  data-i18n="nav.package_info_different_flavors">Different Flavors</span>
+                                  data-i18n="nav.package_info_different_flavors">Commandes produits</span>
                         </a>
 
 

@@ -225,4 +225,37 @@
                 'success' => false
             ]);
         }
+        public function rechercheCodeorqrcodevente(Request $request)
+        {
+
+            $infosproduit = null;
+
+            if ($request->qr_code) {
+
+                $infosproduit = Produit::infosproduitvente($request->qr_code);
+
+            } else {
+
+                $infosproduit = null;
+            }
+
+            if ($infosproduit) {
+
+                return response()->json([
+                    'success' => true,
+                    'id' => $infosproduit->id,
+                    'libelle' => $infosproduit->libelle,
+                    'code' => $infosproduit->code,
+                    'prix' => $infosproduit->montant,
+                    'prixachats_id' => $infosproduit->prixachats_id,
+                    'produits_id' => $infosproduit->id,
+                    'produitsprixachats_id' => $infosproduit->produitsprixachats_id,
+                    'photo' => $infosproduit->photo,
+                ]);
+            }
+
+            return response()->json([
+                'success' => false
+            ]);
+        }
     }

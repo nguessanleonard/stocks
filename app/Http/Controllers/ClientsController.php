@@ -3,7 +3,6 @@
     namespace App\Http\Controllers;
 
     use App\Models\Client;
-    use App\Models\Fournisseur;
     use Carbon\Carbon;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
@@ -72,7 +71,6 @@
 
         public function update(Request $request, $id)
         {
-
             $validator = Validator::make(
                 $request->all(),
                 [

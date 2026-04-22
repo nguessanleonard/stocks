@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <head>
     <meta charset="utf-8">
-    <title>Approvisionnements</title>
+    <title>Commandes</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('layouts.headermeta')
     <!-- base css -->
@@ -32,13 +32,13 @@
             <!-- the #js-page-content id is needed for some plugins to initialize -->
             <main id="js-page-content" role="main" class="page-content">
                 <ol class="breadcrumb page-breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);">Approvisionnements</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0);">Commandes</a></li>
 
                     @include('layouts.heurelocale')
                 </ol>
                 <div class="subheader">
                     <h1 class="subheader-title">
-                        <i class='subheader-icon fal fa-edit'></i> Approvisionnements
+                        <i class='subheader-icon fal fa-edit'></i> Commandes
 
                     </h1>
                 </div>
@@ -50,7 +50,7 @@
                         <div id="panel-5" class="panel">
                             <div class="panel-hdr">
                                 <h2>
-                                    Approvisionnements <span class="fw-300"><i>Ajout</i></span>
+                                    Commandes <span class="fw-300"><i>Ajout</i></span>
                                 </h2>
                                 <div class="panel-toolbar">
                                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip"
@@ -62,14 +62,14 @@
                             </div>
                             <div class="panel-container show">
                                 <div class="panel-content p-0">
-                                    <form class="needs-validation" id="formAjoutFournisseur">
+                                    <form class="needs-validation" id="formAjoutClient">
                                         <div class="panel-content">
                                             <div class="form-row">
                                                 <div class="col-md-12 mb-12 mb-2">
                                                     <label class="form-label" for="validationTooltip01">Le nom du
-                                                        Fournisseur <span
+                                                        Client <span
                                                             class="text-danger">*</span> </label>
-                                                    <select id="fournisseurs_id" name="fournisseurs_id"
+                                                    <select id="clients_id" name="clients_id"
                                                             class="form-control select2-4">
 
                                                     </select>
@@ -113,7 +113,7 @@
 
                                         <div class="col-12 mt-4 mb-2 text-center">
                                             <button type="button" id="btnValider" class="btn btn-success">
-                                                Valider l'approvisionnement
+                                                Valider la commande
                                             </button>
                                         </div>
                                     </form>
@@ -126,7 +126,7 @@
                                     <div id="panel-1" class="panel">
                                         <div class="panel-hdr">
                                             <h2>
-                                                Liste <span class="fw-300"><i>des Fournisseurs</i></span>
+                                                Liste <span class="fw-300"><i>des Clients</i></span>
                                             </h2>
                                             <div class="panel-toolbar">
 
@@ -149,7 +149,7 @@
                                                         <th>code</th>
                                                         <th>photo</th>
                                                         <th>quantité</th>
-                                                        <th>fournisseur</th>
+                                                        <th>Client</th>
                                                         <th>mois|année</th>
                                                         <th>#</th>
                                                     </tr>
@@ -158,7 +158,7 @@
                                                     <tbody>
                                                     @php $i = 1 @endphp
 
-                                                    @foreach($approvisionnements as $key)
+                                                    @foreach($commandes as $key)
                                                         <tr class="gradeA" style="font-size: 10px;">
                                                             <td>{{ $i++  }}</td>
 
@@ -169,21 +169,20 @@
                                                                      class="img-fluid img-thumbnail zoom-click"
                                                                      style="max-width:35px; max-height:35px; cursor: zoom-in;">
                                                             </td>
-                                                            <td>{{ $key->quantiteproduitappro }}</td>
-                                                            <td>{{ $key->fournisseur }}</td>
+                                                            <td>{{ $key->quantiteproduitcommande }}</td>
+                                                            <td>{{ $key->client }}</td>
                                                             <td>{{ $key->mois.'|'.$key->annee }}</td>
-
 
                                                             <td class="text-center">
 
-                                                                <a href="#" class="btnModifierApprovisionnementsproduit"
-                                                                   data-id="{{ $key->approvisionnementsproduits_id }}"
+                                                                <a href="#" class="btnModifierCommandesproduit"
+                                                                   data-id="{{ $key->commandesproduits_id }}"
                                                                    data-libelle="{{ $key->produit }}"
-                                                                   data-idproduitsprixachats="{{ $key->produitsprixachats_id }}"
+                                                                   data-idproduitsprixvente="{{ $key->produitsprixventes_id }}"
                                                                    data-idproduits="{{ $key->produits_id }}"
-                                                                   data-quantite="{{ $key->quantiteproduitappro }}"
-                                                                   data-fournisseur="{{ $key->fournisseur }}"
-                                                                   data-approvisionnement="{{ $key->approvisionnement }}"
+                                                                   data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                   data-client="{{ $key->client }}"
+                                                                   data-commande="{{ $key->commande }}"
                                                                    data-mois="{{ $key->mois }}"
                                                                    data-annee="{{ $key->annee }}"
                                                                 >
@@ -193,11 +192,11 @@
                                                                 </a>
 
                                                                 <a href="#"
-                                                                   data-id="{{ $key->approvisionnementsproduits_id}}"
+                                                                   data-id="{{ $key->commandesproduits_id}}"
                                                                    data-libelle="{{ $key->produit }}"
                                                                    data-idproduits="{{ $key->produits_id }}"
-                                                                   data-quantite="{{ $key->quantiteproduitappro }}"
-                                                                   class="SuppressionApprovisionnementsproduits">
+                                                                   data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                   class="SuppressionCommandesproduits">
                                                                     <div class=" badge badge-default"
                                                                          data-toggle="tooltip"
                                                                          data-placement="top"
@@ -247,17 +246,18 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modalModifierApprovisionnementsproduit" tabindex="-1" role="dialog"
-     aria-labelledby="modalModifierApprovisionnementsproduitLabel" aria-hidden="true">
+<div class="modal fade" id="modalModifierCommandesproduit" tabindex="-1" role="dialog"
+     aria-labelledby="modalModifierCommandesproduitLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="formModifierApprovisionnementsproduit" enctype="multipart/form-data">
+            <form id="formModifierCommandesproduit" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="approvisionnementsproduits_id" id="approvisionnementsproduits_id">
+                <input type="hidden" name="commandesproduit_id" id="commandesproduit_id">
                 <input type="hidden" name="produits_id" id="produits_id">
                 <input type="hidden" name="quantiteold" id="quantiteold">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalModifierApprovisionnementsproduitLabel">Modifier le Produit de l'approvisionnement</h5>
+                    <h5 class="modal-title" id="modalModifierCommandesproduitLabel">Modifier le Produit de
+                        l'approvisionnement</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
@@ -265,8 +265,8 @@
                 <div class="modal-body">
 
                     <div class="form-group">
-                        <label>Fournisseur</label>
-                        <input type="text" id="fournisseur" name="fournisseur" disabled class="form-control">
+                        <label>Client</label>
+                        <input type="text" id="client" name="client" disabled class="form-control">
                     </div>
                     <div class="form-group">
                         <label>Produit</label>
@@ -488,9 +488,13 @@
 
                         // Vérifier si le produit existe déjà
                         $('#produitTable tr').each(function () {
+
                             let code = $(this).data('code');
+
                             if (code === response.code) {
+
                                 produitExiste = true;
+
                                 let inputQte = $(this).find('.quantite');
                                 let prix = parseFloat($(this).find('.prix').text());
                                 let nouvelleQte = parseInt(inputQte.val()) + 1;
@@ -505,14 +509,14 @@
                         // Si produit n'existe pas → nouvelle ligne
                         if (!produitExiste) {
                             const newRow = `
-                                 <tr data-code="${response.code}">
+                              <tr data-code="${response.code}">
                                     <td class="d-none d-md-table-cell">
                                         <img src="${response.photo}" style="max-height:80px;">
                                     </td>
 
                                     <td>
                                         ${response.code}
-                                        <input type="hidden" name="produitsprixachats_id[]" value="${response.id}">
+                                        <input type="hidden" name="produitsprixventes_id[]" value="${response.id}">
                                         <input type="hidden" name="code[]" value="${response.code}">
                                         <input type="hidden" name="produits_id[]" value="${response.produits_id}">
                                     </td>
@@ -631,12 +635,12 @@
 
         $('#btnValider').on('click', function () {
 
-            let fournisseur = $('#fournisseurs_id').val();
+            let Client = $('#clients_id').val();
 
-            if (!fournisseur) {
+            if (!Client) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Veuillez sélectionner un fournisseur'
+                    title: 'Veuillez sélectionner un Client'
                 });
                 return;
             }
@@ -645,14 +649,14 @@
 
             $('#produitTable tr').each(function () {
 
-                let id = $(this).find('input[name="produitsprixachats_id[]"]').val();
+                let id = $(this).find('input[name="produitsprixventes_id[]"]').val();
                 let code = $(this).find('input[name="code[]"]').val();
                 let produits_id = $(this).find('input[name="produits_id[]"]').val();
                 let quantite = $(this).find('.quantite').val();
                 let prix = $(this).find('.prix').text();
 
                 produits.push({
-                    produitsprixachats_id: id,
+                    produitsprixventes_id: id,
                     code: code,
                     quantite: quantite,
                     produits_id: produits_id,
@@ -670,11 +674,11 @@
 
             // Envoi AJAX
             $.ajax({
-                url: "{{ route('approvisionnements.ajouter') }}", // à adapter
+                url: "{{ route('commandes.ajouter') }}", // à adapter
                 type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
-                    fournisseurs_id: fournisseur,
+                    Clients_id: Client,
                     produits: produits
                 },
                 success: function (response) {
@@ -687,10 +691,11 @@
                         // Reset
                         $('#produitTable').html('');
                         $('#infosproduit').html('');
-                        $('#fournisseurs_id').val(null).trigger('change');
+                        $('#clients_id').val(null).trigger('change');
 
                         location.reload();
                     });
+
                 },
                 error: function () {
                     Swal.fire({
@@ -703,59 +708,58 @@
         });
 
         $.ajax({
-            url: "{{ route('fournisseurs.liste') }}",
+            url: "{{ route('clients.liste') }}",
             type: "GET",
             dataType: "json",
             success: function (data) {
-                let selectAjout = $('#fournisseurs_id');
-                let selectModif = $('#fournisseurs_id_modif');
-                selectAjout.empty().append('<option value="">Sélectionnez le fournisseur</option>');
-                selectModif.empty().append('<option value="">Sélectionnez le fournisseur</option>');
+                let selectAjout = $('#clients_id');
+
+                selectAjout.empty().append('<option value="">Sélectionnez le Client</option>');
 
                 $.each(data, function (key, value) {
-                    selectAjout.append('<option value="' + value.id + '">' + value.libelle + '</option>');
-                    selectModif.append('<option value="' + value.id + '">' + value.libelle + '</option>');
+                    selectAjout.append('<option value="' + value.id + '">' + value.noms + '</option>');
+
                 });
             },
             error: function () {
-                console.error("Erreur lors du chargement des fournisseurs.");
+                console.error("Erreur lors du chargement des Clients.");
             }
         });
 
-        $(document).on('click', '.btnModifierApprovisionnementsproduit', function (e) {
+        $(document).on('click', '.btnModifierCommandesproduit', function (e) {
             e.preventDefault();
 
 
-            let approvisionnementsproduits_id = $(this).data('id');
+            let commandesproduit_id = $(this).data('id');
 
             let produits_id = $(this).data('idproduits');
             let libelle = $(this).data('libelle');
             let quantiteold = $(this).data('quantite');
             let quantite_modif = $(this).data('quantite');
-            let fournisseur = $(this).data('fournisseur');
-            let approvisionnement = $(this).data('approvisionnement');
+            let client = $(this).data('client');
+            let commande = $(this).data('commande');
 
-            $('#approvisionnementsproduits_id').val(approvisionnementsproduits_id);
+            $('#commandesproduit_id').val(commandesproduit_id);
             $('#produits_id').val(produits_id);
             $('#libelle_modif').val(libelle);
             $('#quantiteold').val(quantiteold);
             $('#quantite_modif').val(quantite_modif);
 
-            $('#fournisseur').val(`${fournisseur} (${approvisionnement})`);
+            $('#client').val(`${client} (${commande})`);
 
 
-            $('#modalModifierApprovisionnementsproduit').modal('show');
+            $('#modalModifiercommandesproduit').modal('show');
         });
-        $('#formModifierApprovisionnementsproduit').on('submit', function (e) {
+        $('#formModifierCommandesproduit').on('submit', function (e) {
             e.preventDefault();
 
-            let id = $('#approvisionnementsproduits_id').val();
+            let id = $('#commandesproduit_id').val();
 
             let formData = new FormData(this);
             formData.append('_method', 'PUT');
 
             $.ajax({
-                url: 'approvisionnements/modification/' + id,
+                url: 'commandes/modification/' + id,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -792,10 +796,10 @@
         });
 
 
-        $(document).on('click', '.SuppressionApprovisionnementsproduits ', function (e) {
+        $(document).on('click', '.SuppressionCommandesproduits ', function (e) {
             e.preventDefault();
 
-            let approvisionnementsproduits_id = $(this).data('id');
+            let commandesproduit_id = $(this).data('id');
             let libelle = $(this).data('libelle');
             let produits_id = $(this).data('idproduits');
             let quantite = $(this).data('quantite');
@@ -813,16 +817,16 @@
                 if (result.isConfirmed) {
 
                     $.ajax({
-                        url: "{{ route('approvisionnements.confirmer-suppression') }}",
+                        url: "{{ route('commandes.confirmer-suppression') }}",
                         type: "POST",
-                        data: {id: approvisionnementsproduits_id, quantite: quantite, produits_id: produits_id},
+                        data: {id: commandesproduit_id, quantite: quantite, produits_id: produits_id},
                         success: function (response) {
 
                             Toast.fire({
                                 icon: 'success',
                                 text: response.success
                             }).then(() => {
-                                window.location = "{{ route('approvisionnements.index') }}";
+                                window.location = "{{ route('commandes.index') }}";
                             });
                         },
                         error: function (response) {

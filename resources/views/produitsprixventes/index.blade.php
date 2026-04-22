@@ -7,12 +7,23 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Clients</title>
+    <title>Prix de vente Produits</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('layouts.headermeta')
     <!-- base css -->
     @include('layouts.css')
+    <style>
 
+        .zoom-click {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .zoom-click:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+    </style>
 
 </head>
 <body class="mod-bg-1 ">
@@ -32,13 +43,13 @@
             <!-- the #js-page-content id is needed for some plugins to initialize -->
             <main id="js-page-content" role="main" class="page-content">
                 <ol class="breadcrumb page-breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);">Clients</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0);">Produits</a></li>
 
                     @include('layouts.heurelocale')
                 </ol>
                 <div class="subheader">
                     <h1 class="subheader-title">
-                        <i class='subheader-icon fal fa-edit'></i> Clients
+                        <i class='subheader-icon fal fa-edit'></i> Produits
 
                     </h1>
                 </div>
@@ -50,7 +61,7 @@
                         <div id="panel-5" class="panel">
                             <div class="panel-hdr">
                                 <h2>
-                                    Clients <span class="fw-300"><i>Ajout</i></span>
+                                    Produits <span class="fw-300"><i>Ajout</i></span>
                                 </h2>
                                 <div class="panel-toolbar">
                                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip"
@@ -62,35 +73,35 @@
                             </div>
                             <div class="panel-container show">
                                 <div class="panel-content p-0">
-                                    <form class="needs-validation" id="formAjoutClient">
+                                    <form class="needs-validation" id="formAjoutproduitsprixaventes">
                                         <div class="panel-content">
                                             <div class="form-row">
-                                                <div class="col-md-12 mb-12 mb-2">
-                                                    <label class="form-label" for="validationTooltip01">Le nom du
-                                                        Client <span
+                                                <div class="col-md-6 mb-6">
+                                                    <label class="form-label" for="validationTooltip01">Produit <span
                                                             class="text-danger">*</span> </label>
-                                                    <input type="text" class="form-control" id="noms" name="noms"
-                                                           placeholder="Entrez le nom du Client" required>
+                                                    <select class="t form-control select2-4" name="produits_id"
+                                                            id="produits_id" required>
+                                                        <option value="">Sélectionnez le produit</option>
+                                                        @foreach($produits  as $produit)
+                                                            <option
+                                                                value="{{$produit->id}}">{{$produit->libelle.'('.$produit->code.')'}}</option>
+                                                        @endforeach
+                                                    </select>
 
                                                 </div>
+                                                <div class="col-md-6 mb-6">
+                                                    <label class="form-label">Prix d'achat <span
+                                                            class="text-danger">*</span></label>
 
-                                            </div>
-                                            <div class="form-row">
-                                                <div class="col-md-6">
-                                                    <label class="form-label" for="validationTooltip02">Téléphone <span
-                                                            class="text-danger"></span> </label>
-                                                    <input type="text" class="form-control" id="telephone"
-                                                           name="telephone"
-                                                           placeholder="Entrez le numéro de téléphone du Client">
-
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label" for="validationTooltip03">L'adresse
-                                                        électronique <span
-                                                            class="text-danger"></span> </label>
-                                                    <input type="email" class="form-control" id="email" name="email"
-                                                           placeholder="Entrez L'adresse électronique du Client">
-
+                                                    <input type="number"
+                                                           class="form-control"
+                                                           id="prixvente"
+                                                           name="prixvente"
+                                                           min="0"
+                                                           step="1"
+                                                           placeholder="Entrez le prix de vente du produit"
+                                                           required
+                                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                 </div>
 
                                             </div>
@@ -111,7 +122,7 @@
                                     <div id="panel-1" class="panel">
                                         <div class="panel-hdr">
                                             <h2>
-                                                Liste <span class="fw-300"><i>des Clients</i></span>
+                                                Liste <span class="fw-300"><i>des prix achat des produits</i></span>
                                             </h2>
                                             <div class="panel-toolbar">
 
@@ -130,51 +141,29 @@
                                                     <thead class="bg-primary-600">
                                                     <tr>
                                                         <th>N°</th>
-                                                        <th>Libelle</th>
-                                                        <th>Téléphone</th>
-                                                        <th>Email</th>
-                                                        <th>#</th>
+                                                        <th>Produit</th>
+                                                        <th>code</th>
+                                                        <th>Prix de vente</th>
+                                                        <th>image</th>
+
                                                     </tr>
                                                     </thead>
 
                                                     <tbody>
                                                     @php $i = 1 @endphp
 
-                                                    @foreach($clients as $key)
+                                                    @foreach($produitsprixaventes as $key)
+
                                                         <tr class="gradeA" style="font-size: 10px;">
                                                             <td>{{ $i++  }}</td>
 
-                                                            <td>{{ $key->noms }}</td>
-                                                            <td>{{ $key->telephone }}</td>
-                                                            <td>{{ $key->email}}</td>
-
+                                                            <td>{{ $key->produit }}</td>
+                                                            <td>{{ $key->code }}</td>
+                                                            <td>{{ $key->montant }}</td>
                                                             <td class="text-center">
-
-                                                                <a href="#" class="btnModifierClient"
-                                                                   data-id="{{ $key->id }}"
-                                                                   data-noms="{{ $key->noms }}"
-                                                                   data-telephone="{{ $key->telephone }}"
-                                                                   data-email="{{ $key->email }}"
-
-                                                                >
-                                                                    <div class="badge badge-default">
-                                                                        <i class="fas fa-pencil-alt"></i>
-                                                                    </div>
-                                                                </a>
-
-                                                                <a href="#"
-                                                                   data-id="{{ $key->id }}"
-                                                                   data-noms="{{ $key->noms }}"
-                                                                   class="SuppressionClient">
-                                                                    <div class=" badge badge-default"
-                                                                         data-toggle="tooltip"
-                                                                         data-placement="top"
-                                                                         title="Supprimez  {{$key->noms}}">
-                                                                        <i class="fas fa-trash-alt"
-                                                                           style="color: crimson"></i>
-                                                                    </div>
-                                                                </a>
-
+                                                                <img src="{{ $key->photo }}"
+                                                                     class="img-fluid img-thumbnail zoom-click"
+                                                                     style="max-width:35px; max-height:35px; cursor: zoom-in;">
                                                             </td>
 
                                                         </tr>
@@ -215,47 +204,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modalModifierClient" tabindex="-1" role="dialog"
-     aria-labelledby="modalModifierClientLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="formModifierClient" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="clients_id" id="clients_id">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalModifierClientLabel">Modifier le Client</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Noms</label>
-                        <input type="text" id="noms_modif" name="noms"
-                               class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Téléphone</label>
-                        <input type="text" id="telephone_modif" name="telephone"
-                               class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Adresse électronique</label>
-                        <input type="text" id="email_modif" name="email"
-                               class="form-control">
-                    </div>
 
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <!-- END Page Wrapper -->
 <!-- BEGIN Quick Menu -->
 <!-- to add more items, please make sure to change the variable '$menu-items: number;' in your _page-components-shortcut.scss -->
@@ -318,15 +267,32 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        $('#prixvente').on('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        $(document).on('click', '.zoom-click', function () {
+            let src = $(this).attr('src');
+
+            console.log(src);
+
+            $('#imageZoom').attr('src', src);
+            $('#imageModal').modal('show');
+        });
 
 
-        $("#formAjoutClient").on('submit', function (e) {
+        $('#imageZoom').on('click', function () {
+            $('#imageModal').modal('hide');
+        });
+
+
+        $("#formAjoutproduitsprixaventes").on('submit', function (e) {
             e.preventDefault();
 
             let formData = new FormData(this);
 
             $.ajax({
-                url: '{{ route('clients.ajouter') }}',
+                url: '{{ route('produitsprixaventes.ajouter') }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -337,7 +303,7 @@
                         icon: 'success',
                         text: response.success
                     }).then(() => {
-                        window.location = "{{ route('clients.index') }}";
+                        window.location = "{{ route('produitsprixaventes.index') }}";
                     });
                 },
 
@@ -369,120 +335,7 @@
             });
         });
 
-        $(document).on('click', '.btnModifierClient', function (e) {
-            e.preventDefault();
 
-            let id = $(this).data('id');
-            let noms = $(this).data('noms');
-            let telephone = $(this).data('telephone');
-            let email = $(this).data('email');
-            $('#clients_id').val(id);
-            $('#noms_modif').val(noms);
-            $('#telephone_modif').val(telephone);
-            $('#email_modif').val(email);
-
-            $('#modalModifierClient').modal('show');
-        });
-        $('#formModifierClient').on('submit', function (e) {
-            e.preventDefault();
-
-            let id = $('#clients_id').val();
-
-            let formData = new FormData(this);
-            formData.append('_method', 'PUT');
-
-            $.ajax({
-                url: 'clients/modification/' + id,
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-
-                    $('#modalModifierClient').modal('hide');
-
-                    Toast.fire({
-                        icon: 'success',
-                        text: response.success
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function (xhr) {
-
-                    let message = 'Une erreur est survenue';
-
-                    if (xhr.status === 422) {
-                        message = '';
-                        $.each(xhr.responseJSON.errors, function (key, value) {
-                            message += value[0] + '<br>';
-                        });
-                    }
-
-                    Swal.fire({
-                        target: '#modalModifierClient', // ✅ clé ici
-                        icon: 'error',
-                        title: 'Erreur',
-                        html: message
-                    });
-                }
-            });
-        });
-
-        $(document).on('click', '.SuppressionClient', function (e) {
-            e.preventDefault();
-
-            let clients_id = $(this).data('id');
-            let noms = $(this).data('noms');
-
-            Swal.fire({
-                title: "Voulez-vous supprimer ",
-                text: " le client " + noms + " ?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, confirmer",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    $.ajax({
-                        url: "{{ route('clients.confirmer-suppression') }}",
-                        type: "POST",
-                        data: {id: clients_id},
-                        success: function (response) {
-
-                            Toast.fire({
-                                icon: 'success',
-                                text: response.success
-                            }).then(() => {
-                                window.location = "{{ route('clients.index') }}";
-                            });
-                        },
-                        error: function (response) {
-
-                            let errors = response.responseJSON?.errors;
-                            let message = '';
-
-                            if (errors) {
-                                $.each(errors, function (key, value) {
-                                    message += value[0] + '\n';
-                                });
-                            } else {
-                                message = "Une erreur est survenue";
-                            }
-
-                            Swal.fire({
-                                icon: "error",
-                                title: "Erreur!",
-                                text: message
-                            });
-                        }
-                    });
-                }
-            });
-        });
     });
 
 

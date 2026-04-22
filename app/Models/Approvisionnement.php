@@ -35,7 +35,6 @@ class Approvisionnement extends Model
             ->join('prixachats as pa', 'ppa.prixachats_id', '=', 'pa.id')
             ->where('appr.supprimer', 0)
             ->where('apprp.supprimer', 0)
-            ->where('ppa.statut', 1)
             ->select(
                 'p.libelle as produit',
                 'p.code',

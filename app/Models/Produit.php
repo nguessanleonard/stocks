@@ -55,6 +55,26 @@
                 ])
                 ->first();
         }
+        public static function infosproduitvente($code)
+        {
+
+            return DB::table('produits as p')
+                ->join('produitsprixventes as ppv', 'ppv.produits_id', 'p.id')
+                ->join('prixventes as pv', 'ppv.prixventes_id', '=', 'pv.id')
+                ->where('p.supprimer', 0)
+                ->where('p.code', $code)
+                ->where('ppv.statut', 1)
+                ->select([
+                    'p.id',
+                    'p.libelle',
+                    'p.code',
+                    'p.photo',
+                    'pv.montant',
+                    'pv.id as prixventes_id',
+                    'ppv.id as produitsprixventes_id'
+                ])
+                ->first();
+        }
 
         public static function existe($produits_id)
         {
