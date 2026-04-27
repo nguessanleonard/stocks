@@ -71,6 +71,7 @@
 
                                 </div>
                             </div>
+                            @can('Ajouter prix d achat')
                             <div class="panel-container show">
                                 <div class="panel-content p-0">
                                     <form class="needs-validation" id="formAjoutproduitsprixachatsprixachat">
@@ -117,6 +118,8 @@
                                 </div>
 
                             </div>
+                            @endcan
+                            @can('Liste prix d achat')
                             <div class="row">
                                 <div class="col-xl-12">
                                     <div id="panel-1" class="panel">
@@ -177,6 +180,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
                         </div>
 
                     </div>

@@ -46,6 +46,7 @@ class Approvisionnement extends Model
                 'f.libelle as fournisseur',
                 'f.id as fournisseurs_id',
                 'apprp.quantite as quantiteproduitappro',
+                'apprp.nombre',
                 'appr.libelle as approvisionnement',
                 'm.libelle as mois',
                 'a.libelle as annee'

@@ -1,13 +1,16 @@
 <?php
 
+    use App\Http\Controllers\AdminsController;
     use App\Http\Controllers\ApprovisionnementsController;
     use App\Http\Controllers\ClientsController;
     use App\Http\Controllers\CommandesController;
     use App\Http\Controllers\ConnexionController;
     use App\Http\Controllers\FournisseursController;
+    use App\Http\Controllers\PermissionsController;
     use App\Http\Controllers\ProduitsController;
     use App\Http\Controllers\ProduitsprixachatsController;
     use App\Http\Controllers\ProduitsprixventesController;
+    use App\Http\Controllers\RolesController;
     use App\Http\Controllers\TableaudebordController;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Route;
@@ -25,6 +28,28 @@
 
 
         Route::match(['get', 'post'], '/tableau-de-bord/', [TableaudebordController::class, 'index'])->name('tableaudebord.index');
+
+        // route des permissions
+        Route::get('permissions', [PermissionsController::class, 'index'])->name('permissions.index');
+        Route::match(['get', 'post'], 'permissions/ajouter', [PermissionsController::class, 'ajouter'])->name('permissions.ajouter');
+        Route::post('/permissions/confirmer-suppression', [PermissionsController::class, 'confirmersuppression'])->name('permissions.confirmer-suppression');
+        Route::PUT('/permissions/modification/{permissions_id}', [PermissionsController::class, 'update'])->name('permissions.modification');
+
+        // route des role
+        Route::get('roles', [RolesController::class, 'index'])->name('roles.index');;
+        Route::match(['get', 'post'], 'roles/ajouter', [RolesController::class, 'ajouter'])->name('roles.ajouter');
+        Route::post('/roles/confirmer-suppression', [RolesController::class, 'confirmersuppression'])->name('roles.confirmer-suppression');
+        Route::get('/roles/edit/{id}', [RolesController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/update/{id}', [RolesController::class, 'update'])->name('roles.update');
+
+        // route admins
+        Route::get('/admins', [AdminsController::class, 'index'])->name('admins.index');
+        Route::get('/attribution-role-admins/edit/{id}', [AdminsController::class, 'edit'])->name('admins.edit');
+        Route::put('/admins/{id}/attribution-role', [AdminsController::class, 'attributionrole'])->name('admins.attributionrole');
+        Route::post('/admins/ajouter', [AdminsController::class, 'ajouter'])->name('admins.ajouter');
+        Route::post('/admins/confirmer-suppression', [AdminsController::class, 'confirmersuppression'])->name('admins.confirmer-suppression');
+        Route::post('/admins/reinitialisation', [AdminsController::class, 'passwordreset'])->name('admins.pwdreset');
+        Route::put('/admins/modifications-infos-personne/{id}', [AdminsController::class, 'modificationsinfospersonne'])->name('admins.modificationsinfospersonne');
 
         //Route Produits
         Route::get('/produits', [ProduitsController::class, 'index'])->name('produits.index');

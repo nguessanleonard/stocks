@@ -247,9 +247,10 @@
                     'libelle' => $infosproduit->libelle,
                     'code' => $infosproduit->code,
                     'prix' => $infosproduit->montant,
-                    'prixachats_id' => $infosproduit->prixachats_id,
+                    'stock' => $infosproduit->stock,
+                    'prixventes_id' => $infosproduit->prixventes_id,
                     'produits_id' => $infosproduit->id,
-                    'produitsprixachats_id' => $infosproduit->produitsprixachats_id,
+                    'produitsprixventes_id' => $infosproduit->produitsprixventes_id,
                     'photo' => $infosproduit->photo,
                 ]);
             }

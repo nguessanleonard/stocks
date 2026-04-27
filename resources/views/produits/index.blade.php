@@ -177,7 +177,9 @@
                                                     <tr>
                                                         <th>N°</th>
                                                         <th>Libelle</th>
+                                                        <th>quantité en stock</th>
                                                         <th>codeqr</th>
+
                                                         <th>description</th>
                                                         <th>image</th>
                                                         <th>#</th>
@@ -193,12 +195,14 @@
                                                             <td>{{ $i++  }}</td>
 
                                                             <td>{{ $produit->libelle }}</td>
+                                                            <td>{{ $produit->quantite }}</td>
                                                             <td>
                                                                 <img src="data:image/png;base64,{{ $produit->qrcode }}"
                                                                      class="img-fluid img-thumbnail zoom-click"
                                                                      style="max-width:35px; max-height:35px; cursor: zoom-in;">
 
                                                             </td>
+
                                                             <td>{{ $produit->description }}</td>
                                                             <td class="text-center">
                                                                 <img src="{{ $produit->photo }}"

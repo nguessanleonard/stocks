@@ -60,6 +60,7 @@
 
                                 </div>
                             </div>
+                            @can('Ajouter une commande')
                             <div class="panel-container show">
                                 <div class="panel-content p-0">
                                     <form class="needs-validation" id="formAjoutClient">
@@ -68,7 +69,7 @@
                                                 <div class="col-md-12 mb-12 mb-2">
                                                     <label class="form-label" for="validationTooltip01">Le nom du
                                                         Client <span
-                                                            class="text-danger">*</span> </label>
+                                                            class="text-danger"></span> </label>
                                                     <select id="clients_id" name="clients_id"
                                                             class="form-control select2-4">
 
@@ -121,6 +122,8 @@
                                 </div>
 
                             </div>
+                            @endcan
+                            @can('Liste des commandes')
                             <div class="row">
                                 <div class="col-xl-12">
                                     <div id="panel-1" class="panel">
@@ -151,7 +154,9 @@
                                                         <th>quantité</th>
                                                         <th>Client</th>
                                                         <th>mois|année</th>
-                                                        <th>#</th>
+                                                        @canany(['Modification de la commande','Suppression de la commande'])
+                                                            <th>Actions</th>
+                                                        @endcanany
                                                     </tr>
                                                     </thead>
 
@@ -172,42 +177,44 @@
                                                             <td>{{ $key->quantiteproduitcommande }}</td>
                                                             <td>{{ $key->client }}</td>
                                                             <td>{{ $key->mois.'|'.$key->annee }}</td>
+                                                            @canany(['Modification de la commande','Suppression de la commande'])
+                                                                <td class="text-center">
+                                                                    @can('Modification de la commande')
+                                                                        <a href="#" class="btnModifierCommandesproduit"
+                                                                           data-id="{{ $key->commandesproduits_id }}"
+                                                                           data-libelle="{{ $key->produit }}"
+                                                                           data-idproduitsprixvente="{{ $key->produitsprixventes_id }}"
+                                                                           data-idproduits="{{ $key->produits_id }}"
+                                                                           data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                           data-client="{{ $key->client }}"
+                                                                           data-commande="{{ $key->commande }}"
+                                                                           data-mois="{{ $key->mois }}"
+                                                                           data-annee="{{ $key->annee }}"
+                                                                        >
+                                                                            <div class="badge badge-default">
+                                                                                <i class="fas fa-pencil-alt"></i>
+                                                                            </div>
+                                                                        </a>
+                                                                    @endcan
+                                                                    @can('Suppression de la commande')
+                                                                        <a href="#"
+                                                                           data-id="{{ $key->commandesproduits_id}}"
+                                                                           data-libelle="{{ $key->produit }}"
+                                                                           data-idproduits="{{ $key->produits_id }}"
+                                                                           data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                           class="SuppressionCommandesproduits">
+                                                                            <div class=" badge badge-default"
+                                                                                 data-toggle="tooltip"
+                                                                                 data-placement="top"
+                                                                                 title="Supprimez  {{$key->produit}}">
+                                                                                <i class="fas fa-trash-alt"
+                                                                                   style="color: crimson"></i>
+                                                                            </div>
+                                                                        </a>
+                                                                    @endcan
 
-                                                            <td class="text-center">
-
-                                                                <a href="#" class="btnModifierCommandesproduit"
-                                                                   data-id="{{ $key->commandesproduits_id }}"
-                                                                   data-libelle="{{ $key->produit }}"
-                                                                   data-idproduitsprixvente="{{ $key->produitsprixventes_id }}"
-                                                                   data-idproduits="{{ $key->produits_id }}"
-                                                                   data-quantite="{{ $key->quantiteproduitcommande }}"
-                                                                   data-client="{{ $key->client }}"
-                                                                   data-commande="{{ $key->commande }}"
-                                                                   data-mois="{{ $key->mois }}"
-                                                                   data-annee="{{ $key->annee }}"
-                                                                >
-                                                                    <div class="badge badge-default">
-                                                                        <i class="fas fa-pencil-alt"></i>
-                                                                    </div>
-                                                                </a>
-
-                                                                <a href="#"
-                                                                   data-id="{{ $key->commandesproduits_id}}"
-                                                                   data-libelle="{{ $key->produit }}"
-                                                                   data-idproduits="{{ $key->produits_id }}"
-                                                                   data-quantite="{{ $key->quantiteproduitcommande }}"
-                                                                   class="SuppressionCommandesproduits">
-                                                                    <div class=" badge badge-default"
-                                                                         data-toggle="tooltip"
-                                                                         data-placement="top"
-                                                                         title="Supprimez  {{$key->produit}}">
-                                                                        <i class="fas fa-trash-alt"
-                                                                           style="color: crimson"></i>
-                                                                    </div>
-                                                                </a>
-
-                                                            </td>
-
+                                                                </td>
+                                                            @endcanany
                                                         </tr>
                                                     @endforeach
                                                     </tbody>
@@ -219,6 +226,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
                         </div>
 
                     </div>
@@ -351,16 +359,11 @@
             }
         });
 
-        // ===============================
-        // TOGGLE CHAMP SAISIE
-        // ===============================
         $('#toggleCode').on('click', function () {
             $('#produit').toggle();
         });
 
-        // ===============================
-        // RECHERCHE PAR CODE MANUEL
-        // ===============================
+
         $('#btnRechercherCode').on('click', function () {
 
             let code = $('#inputCode').val();
@@ -376,9 +379,7 @@
             rechercherProduit({qr_code: code});
         });
 
-        // ===============================
-        // SCAN QR CODE
-        // ===============================
+
         $('#btnScanQR').on('click', async function () {
 
             $('#modalScan').modal('show');
@@ -389,11 +390,11 @@
 
                 const constraints = {
                     video: {
-                        facingMode: {exact: "environment"} // 🔥 force caméra arrière
+                        facingMode: {exact: "environment"}
                     }
                 };
 
-                // fallback si "exact" échoue
+
                 let stream;
 
                 try {
@@ -405,7 +406,7 @@
                 }
 
                 video.srcObject = stream;
-                video.setAttribute("playsinline", true); // 🔥 important iOS
+                video.setAttribute("playsinline", true);
                 video.play();
 
                 const canvas = document.getElementById('qr-canvas');
@@ -451,12 +452,10 @@
             }
         });
 
-        // ===============================
-        // FONCTION UNIQUE RECHERCHE
-        // ===============================
+
         function rechercherProduit(data) {
 
-            $.post("{{ route('produits.rechercheCodeorqrcode') }}", data)
+            $.post("{{ route('produits.rechercheCodeorqrcodevente') }}", data)
                 .done(function (response) {
 
                     if (response.success) {
@@ -490,6 +489,7 @@
                         $('#produitTable tr').each(function () {
 
                             let code = $(this).data('code');
+                            let stock = $(this).data('stock');
 
                             if (code === response.code) {
 
@@ -497,19 +497,28 @@
 
                                 let inputQte = $(this).find('.quantite');
                                 let prix = parseFloat($(this).find('.prix').text());
-                                let nouvelleQte = parseInt(inputQte.val()) + 1;
+                                let ancienneQte = parseInt(inputQte.val());
+                                let nouvelleQte = ancienneQte + 1;
+
+                                // Vérification du stock AVANT d'incrémenter
+                                if (nouvelleQte > stock) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Stock insuffisant',
+                                        text: 'La quantité demandée dépasse le stock disponible(' + stock + ')'
+                                    });
+                                    return; // on bloque
+                                }
 
                                 inputQte.val(nouvelleQte);
-
-                                // Mise à jour montant
                                 $(this).find('.montant').text((prix * nouvelleQte).toFixed(2));
                             }
                         });
 
-                        // Si produit n'existe pas → nouvelle ligne
+
                         if (!produitExiste) {
                             const newRow = `
-                              <tr data-code="${response.code}">
+                             <tr data-code="${response.code}" data-stock="${response.stock}">
                                     <td class="d-none d-md-table-cell">
                                         <img src="${response.photo}" style="max-height:80px;">
                                     </td>
@@ -572,14 +581,37 @@
         }
 
 
-        // Incrementer
-        $(document).on('click', '.btn-plus', function () {
-            let input = $(this).siblings('.quantite');
+        $(document).on('click', '.btn-plus', function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            let row = $(this).closest('tr');
+
+            let input = row.find('.quantite');
+            let prix = parseFloat(row.find('.prix').text());
+            let stock = parseInt(row.data('stock'));
+
             let value = parseInt(input.val());
-            input.val(value + 1);
+            let nouvelleQte = value + 1;
+            if (value >= stock) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock insuffisant',
+                    text: 'Le stock actuel est ' + stock
+                });
+
+                input.val(value - 1);
+
+                return;
+            }
+
+
+            input.val(nouvelleQte);
+            row.find('.montant').text((prix * nouvelleQte).toFixed(2));
         });
 
-        // Decrementer
+
         $(document).on('click', '.btn-moins', function () {
             let input = $(this).siblings('.quantite');
             let value = parseInt(input.val());
@@ -748,7 +780,7 @@
             $('#client').val(`${client} (${commande})`);
 
 
-            $('#modalModifiercommandesproduit').modal('show');
+            $('#modalModifierCommandesproduit').modal('show');
         });
         $('#formModifierCommandesproduit').on('submit', function (e) {
             e.preventDefault();

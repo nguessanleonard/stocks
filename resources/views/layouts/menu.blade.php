@@ -108,35 +108,38 @@
 
                 <a href="#" title="Theme Settings" class=" " data-filter-tags="theme settings">
                     <i class="fal fa-cog"></i>
-                    <span class="nav-link-text" data-i18n="nav.theme_settings">Theme Settings</span>
+                    <span class="nav-link-text" data-i18n="nav.theme_settings">Comptes et permissions</span>
                 </a>
 
                 <ul>
 
                     <li>
 
-                        <a href="#" title="How it works" class=" " data-filter-tags="theme settings how it works">
+                        <a href="{{route('admins.index')}}" title="Utilisateurs" class=" "
+                           data-filter-tags="theme settings how it works">
 
-                            <span class="nav-link-text" data-i18n="nav.theme_settings_how_it_works">How it works</span>
+                            <span class="nav-link-text" data-i18n="nav.theme_settings_how_it_works">Utilisateurs</span>
                         </a>
 
 
                     </li>
                     <li>
 
-                        <a href="#" title="Layout Options" class=" " data-filter-tags="theme settings layout options">
+                        <a href="{{route('roles.index')}}" title="Rôles" class=" "
+                           data-filter-tags="theme settings layout options">
 
                             <span class="nav-link-text"
-                                  data-i18n="nav.theme_settings_layout_options">Layout Options</span>
+                                  data-i18n="nav.theme_settings_layout_options">Rôles</span>
                         </a>
 
 
                     </li>
                     <li>
 
-                        <a href="#" title="Skin Options" class=" " data-filter-tags="theme settings skin options">
+                        <a href="{{route('permissions.index')}}" title="Permissions" class=" "
+                           data-filter-tags="theme settings skin options">
 
-                            <span class="nav-link-text" data-i18n="nav.theme_settings_skin_options">Skin Options</span>
+                            <span class="nav-link-text" data-i18n="nav.theme_settings_skin_options">Permissions</span>
                         </a>
 
 

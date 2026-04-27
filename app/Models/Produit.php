@@ -68,6 +68,7 @@
                     'p.id',
                     'p.libelle',
                     'p.code',
+                    'p.quantite as stock',
                     'p.photo',
                     'pv.montant',
                     'pv.id as prixventes_id',

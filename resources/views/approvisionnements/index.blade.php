@@ -148,7 +148,8 @@
                                                         <th>Produit</th>
                                                         <th>code</th>
                                                         <th>photo</th>
-                                                        <th>quantité</th>
+                                                        <th>quantité livrée</th>
+                                                        <th>quantité restante </th>
                                                         <th>fournisseur</th>
                                                         <th>mois|année</th>
                                                         <th>#</th>
@@ -170,6 +171,7 @@
                                                                      style="max-width:35px; max-height:35px; cursor: zoom-in;">
                                                             </td>
                                                             <td>{{ $key->quantiteproduitappro }}</td>
+                                                            <td>{{ $key->nombre }}</td>
                                                             <td>{{ $key->fournisseur }}</td>
                                                             <td>{{ $key->mois.'|'.$key->annee }}</td>
 
@@ -792,17 +794,17 @@
         });
 
 
-        $(document).on('click', '.SuppressionApprovisionnementsproduits ', function (e) {
+        $(document).on('click', '.SuppressionApprovisionnementsproduits', function (e) {
             e.preventDefault();
 
-            let approvisionnementsproduits_id = $(this).data('id');
+            let id = $(this).data('id');
             let libelle = $(this).data('libelle');
             let produits_id = $(this).data('idproduits');
             let quantite = $(this).data('quantite');
 
             Swal.fire({
-                title: "Voulez-vous supprimer ",
-                text: " " + libelle + " ?",
+                title: "Voulez-vous supprimer",
+                text: libelle + " ?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
@@ -810,45 +812,65 @@
                 confirmButtonText: "Oui, confirmer",
                 cancelButtonText: "Annuler"
             }).then((result) => {
-                if (result.isConfirmed) {
 
-                    $.ajax({
-                        url: "{{ route('approvisionnements.confirmer-suppression') }}",
-                        type: "POST",
-                        data: {id: approvisionnementsproduits_id, quantite: quantite, produits_id: produits_id},
-                        success: function (response) {
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: "{{ route('approvisionnements.confirmer-suppression') }}",
+                    type: "POST",
+                    data: {
+                        id: id,
+                        quantite: quantite,
+                        produits_id: produits_id,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function (response) {
+
+                        if (response.success) {
 
                             Toast.fire({
                                 icon: 'success',
                                 text: response.success
-                            }).then(() => {
-                                window.location = "{{ route('approvisionnements.index') }}";
                             });
-                        },
-                        error: function (response) {
 
-                            let errors = response.responseJSON?.errors;
-                            let message = '';
+                            setTimeout(() => {
+                                window.location = "{{ route('approvisionnements.index') }}";
+                            }, 800);
 
-                            if (errors) {
-                                $.each(errors, function (key, value) {
-                                    message += value[0] + '\n';
-                                });
-                            } else {
-                                message = "Une erreur est survenue";
-                            }
+                        } else if (response.error) {
 
                             Swal.fire({
                                 icon: "error",
-                                title: "Erreur!",
-                                text: message
+                                title: "Erreur",
+                                text: response.error
                             });
                         }
-                    });
-                }
+                    },
+
+                    error: function (xhr) {
+
+                        let message = "Une erreur est survenue";
+
+                        if (xhr.responseJSON?.error) {
+                            message = xhr.responseJSON.error;
+                        }
+
+                        if (xhr.responseJSON?.errors) {
+                            message = Object.values(xhr.responseJSON.errors)
+                                .map(e => e[0])
+                                .join("\n");
+                        }
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Erreur!",
+                            text: message
+                        });
+                    }
+                });
             });
         });
-
     });
 
 

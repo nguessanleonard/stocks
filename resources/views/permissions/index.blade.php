@@ -7,7 +7,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Clients</title>
+    <title>Permissions</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('layouts.headermeta')
     <!-- base css -->
@@ -32,13 +32,13 @@
             <!-- the #js-page-content id is needed for some plugins to initialize -->
             <main id="js-page-content" role="main" class="page-content">
                 <ol class="breadcrumb page-breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);">Clients</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0);">Permissions</a></li>
 
                     @include('layouts.heurelocale')
                 </ol>
                 <div class="subheader">
                     <h1 class="subheader-title">
-                        <i class='subheader-icon fal fa-edit'></i> Clients
+                        <i class='subheader-icon fal fa-edit'></i> Permissions
 
                     </h1>
                 </div>
@@ -50,7 +50,7 @@
                         <div id="panel-5" class="panel">
                             <div class="panel-hdr">
                                 <h2>
-                                    Clients <span class="fw-300"><i>Ajout</i></span>
+                                    Permissions <span class="fw-300"><i>Ajout</i></span>
                                 </h2>
                                 <div class="panel-toolbar">
                                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip"
@@ -60,48 +60,25 @@
 
                                 </div>
                             </div>
-                            @can('Ajouter un client')
+                            @can('Ajouter une permission')
                                 <div class="panel-container show">
                                     <div class="panel-content p-0">
-                                        <form class="needs-validation" id="formAjoutClient">
-                                            <div class="panel-content">
-                                                <div class="form-row">
-                                                    <div class="col-md-12 mb-12 mb-2">
-                                                        <label class="form-label" for="validationTooltip01">Le nom du
-                                                            Client <span
-                                                                class="text-danger">*</span> </label>
-                                                        <input type="text" class="form-control" id="noms" name="noms"
-                                                               placeholder="Entrez le nom du Client" required>
-
+                                        <form id="ajoutPermission">
+                                            @csrf
+                                            <div class="row">
+                                                <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                                    <h4>Création d'une permission</h4>
+                                                    <div class="form-group">
+                                                        <label for="titre">Titre</label>
+                                                        <input type="text" id="titre" class="form-control" name="titre"
+                                                               placeholder="Entrez le nom de la permission">
                                                     </div>
-
                                                 </div>
-                                                <div class="form-row">
-                                                    <div class="col-md-6">
-                                                        <label class="form-label" for="validationTooltip02">Téléphone
-                                                            <span
-                                                                class="text-danger"></span> </label>
-                                                        <input type="text" class="form-control" id="telephone"
-                                                               name="telephone"
-                                                               placeholder="Entrez le numéro de téléphone du Client">
-
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label class="form-label" for="validationTooltip03">L'adresse
-                                                            électronique <span
-                                                                class="text-danger"></span> </label>
-                                                        <input type="email" class="form-control" id="email" name="email"
-                                                               placeholder="Entrez L'adresse électronique du Client">
-
-                                                    </div>
-
-                                                </div>
-
-
                                             </div>
-                                            <div
-                                                class="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row justify-content-center align-items-center">
-                                                <button class="btn btn-primary" type="submit">Valider</button>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary waves-effect waves-light">
+                                                    Enrégistrer
+                                                </button>
                                             </div>
                                         </form>
 
@@ -109,13 +86,13 @@
 
                                 </div>
                             @endcan
-                            @can('Liste des clients')
+                            @can('Liste des permissions')
                                 <div class="row">
                                     <div class="col-xl-12">
                                         <div id="panel-1" class="panel">
                                             <div class="panel-hdr">
                                                 <h2>
-                                                    Liste <span class="fw-300"><i>des Clients</i></span>
+                                                    Liste <span class="fw-300"><i>des Permissions</i></span>
                                                 </h2>
                                                 <div class="panel-toolbar">
 
@@ -134,58 +111,38 @@
                                                         <thead class="bg-primary-600">
                                                         <tr>
                                                             <th>N°</th>
-                                                            <th>Libelle</th>
-                                                            <th>Téléphone</th>
-                                                            <th>Email</th>
+                                                            <th>Titre</th>
 
-                                                            @canany(['Modification client','Suppression client'])
+                                                            @canany(['Modification de la permission'])
                                                                 <th>Actions</th>
                                                             @endcanany
+
+
                                                         </tr>
                                                         </thead>
 
                                                         <tbody>
                                                         @php $i = 1 @endphp
 
-                                                        @foreach($clients as $key)
-                                                            <tr class="gradeA" style="font-size: 10px;">
+                                                        @foreach($permissions as $permission)
+                                                            <tr class="gradeA">
                                                                 <td>{{ $i++  }}</td>
-
-                                                                <td>{{ $key->noms }}</td>
-                                                                <td>{{ $key->telephone }}</td>
-                                                                <td>{{ $key->email}}</td>
-
-                                                                @canany(['Modification client','Suppression client'])
-
+                                                                <td>{{ $permission->name }}</td>
+                                                                @canany(['Modification de la permission'])
                                                                     <td class="text-center">
-                                                                        @can('Modification client')
-                                                                            <a href="#" class="btnModifierClient"
-                                                                               data-id="{{ $key->id }}"
-                                                                               data-noms="{{ $key->noms }}"
-                                                                               data-telephone="{{ $key->telephone }}"
-                                                                               data-email="{{ $key->email }}"
-
+                                                                        @can('Modification de la permission')
+                                                                            <a href="#" class="btnModifierPermission"
+                                                                               data-id="{{ $permission->id }}"
+                                                                               data-name="{{ $permission->name }}"
                                                                             >
-                                                                                <div class="badge badge-default">
+                                                                                <div class="badge badge-default"
+                                                                                     data-toggle="tooltip"
+                                                                                     data-placement="top"
+                                                                                     title="Modifier la permission {{$permission->name}}">
                                                                                     <i class="fas fa-pencil-alt"></i>
                                                                                 </div>
                                                                             </a>
                                                                         @endcan
-                                                                        @can('Suppression client')
-                                                                            <a href="#"
-                                                                               data-id="{{ $key->id }}"
-                                                                               data-noms="{{ $key->noms }}"
-                                                                               class="SuppressionClient">
-                                                                                <div class=" badge badge-default"
-                                                                                     data-toggle="tooltip"
-                                                                                     data-placement="top"
-                                                                                     title="Supprimez  {{$key->noms}}">
-                                                                                    <i class="fas fa-trash-alt"
-                                                                                       style="color: crimson"></i>
-                                                                                </div>
-                                                                            </a>
-                                                                        @endcan
-
                                                                     </td>
                                                                 @endcanany
                                                             </tr>
@@ -196,10 +153,10 @@
                                                     <!-- datatable end -->
                                                 </div>
                                             </div>
-                                            @endcan
                                         </div>
                                     </div>
                                 </div>
+                            @endcan
                         </div>
 
                     </div>
@@ -227,33 +184,23 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modalModifierClient" tabindex="-1" role="dialog"
-     aria-labelledby="modalModifierClientLabel" aria-hidden="true">
+<div class="modal fade" id="modalModifierPermission" tabindex="-1" role="dialog"
+     aria-labelledby="modalModifierPermissionLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="formModifierClient" enctype="multipart/form-data">
+            <form id="formModifierPermission" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="clients_id" id="clients_id">
+                <input type="hidden" name="permissions_id" id="permissions_id">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalModifierClientLabel">Modifier le Client</h5>
+                    <h5 class="modal-title" id="modalModifierPermissionLabel">Modifier le Permission</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Noms</label>
-                        <input type="text" id="noms_modif" name="noms"
-                               class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Téléphone</label>
-                        <input type="text" id="telephone_modif" name="telephone"
-                               class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Adresse électronique</label>
-                        <input type="text" id="email_modif" name="email"
+                        <label>Libelle</label>
+                        <input type="text" id="noms_modif" name="name"
                                class="form-control">
                     </div>
 
@@ -331,31 +278,26 @@
             }
         });
 
-
-        $("#formAjoutClient").on('submit', function (e) {
+        $("#ajoutPermission").on('submit', function (e) {
             e.preventDefault();
 
-            let formData = new FormData(this);
-
             $.ajax({
-                url: '{{ route('clients.ajouter') }}',
+                url: '{{ route("permissions.ajouter") }}',
                 type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
+                data: $(this).serialize(),
                 success: function (response) {
 
                     Toast.fire({
                         icon: 'success',
                         text: response.success
                     }).then(() => {
-                        window.location = "{{ route('clients.index') }}";
+                        window.location = "{{ route('permissions.index') }}";
                     });
-                },
 
+                    $('#ajoutPermission')[0].reset();
+                },
                 error: function (xhr) {
 
-                    // Erreurs de validation
                     if (xhr.status === 422) {
                         let message = '';
                         $.each(xhr.responseJSON.errors, function (key, value) {
@@ -367,10 +309,7 @@
                             title: 'Erreur de validation',
                             html: message
                         });
-                    }
-
-                    // Autres erreurs
-                    else {
+                    } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Erreur',
@@ -381,37 +320,36 @@
             });
         });
 
-        $(document).on('click', '.btnModifierClient', function (e) {
+
+        $(document).on('click', '.btnModifierPermission', function (e) {
             e.preventDefault();
 
             let id = $(this).data('id');
-            let noms = $(this).data('noms');
-            let telephone = $(this).data('telephone');
-            let email = $(this).data('email');
-            $('#clients_id').val(id);
-            $('#noms_modif').val(noms);
-            $('#telephone_modif').val(telephone);
-            $('#email_modif').val(email);
+            let noms = $(this).data('name');
 
-            $('#modalModifierClient').modal('show');
+            $('#permissions_id').val(id);
+            $('#noms_modif').val(noms);
+
+
+            $('#modalModifierPermission').modal('show');
         });
-        $('#formModifierClient').on('submit', function (e) {
+        $('#formModifierPermission').on('submit', function (e) {
             e.preventDefault();
 
-            let id = $('#clients_id').val();
+            let id = $('#permissions_id').val();
 
             let formData = new FormData(this);
             formData.append('_method', 'PUT');
 
             $.ajax({
-                url: 'clients/modification/' + id,
+                url: 'permissions/modification/' + id,
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function (response) {
 
-                    $('#modalModifierClient').modal('hide');
+                    $('#modalModifierPermission').modal('hide');
 
                     Toast.fire({
                         icon: 'success',
@@ -432,7 +370,7 @@
                     }
 
                     Swal.fire({
-                        target: '#modalModifierClient', // ✅ clé ici
+                        target: '#modalModifierPermission', // ✅ clé ici
                         icon: 'error',
                         title: 'Erreur',
                         html: message
@@ -441,60 +379,7 @@
             });
         });
 
-        $(document).on('click', '.SuppressionClient', function (e) {
-            e.preventDefault();
 
-            let clients_id = $(this).data('id');
-            let noms = $(this).data('noms');
-
-            Swal.fire({
-                title: "Voulez-vous supprimer ",
-                text: " le client " + noms + " ?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Oui, confirmer",
-                cancelButtonText: "Annuler"
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    $.ajax({
-                        url: "{{ route('clients.confirmer-suppression') }}",
-                        type: "POST",
-                        data: {id: clients_id},
-                        success: function (response) {
-
-                            Toast.fire({
-                                icon: 'success',
-                                text: response.success
-                            }).then(() => {
-                                window.location = "{{ route('clients.index') }}";
-                            });
-                        },
-                        error: function (response) {
-
-                            let errors = response.responseJSON?.errors;
-                            let message = '';
-
-                            if (errors) {
-                                $.each(errors, function (key, value) {
-                                    message += value[0] + '\n';
-                                });
-                            } else {
-                                message = "Une erreur est survenue";
-                            }
-
-                            Swal.fire({
-                                icon: "error",
-                                title: "Erreur!",
-                                text: message
-                            });
-                        }
-                    });
-                }
-            });
-        });
     });
 
 

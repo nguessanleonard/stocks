@@ -101,6 +101,7 @@
                 DB::table('approvisionnementsproduits')->insert([
                     'produitsprixachats_id' => $item['produitsprixachats_id'],
                     'quantite' => $item['quantite'],
+                    'nombre' => $item['quantite'],
                     'approvisionnements_id' => $appro->id,
                     'created_at' => now()
                 ]);
@@ -147,6 +148,7 @@
             // Mise à jour
             $approproduit->update([
                 'quantite' => $validated['quantite'],
+                'nombre' => $validated['quantite'],
                 'userUpdate' => Auth::id(),
                 'updated_at' => now(),
             ]);
@@ -169,39 +171,57 @@
 
         public function confirmersuppression(Request $request)
         {
-
-            if (isset($request->id) && is_numeric($request->id) && !is_null($request->id)) {
-
-                $verif = Approvisionnementsproduit::find($request->id);
-
-                if (!$verif) {
-                    return response()->json([
-                        'errors' => [
-                            'produit' => ['suppression impossible']
-                        ]
-                    ], 422);
-                } else {
-                    $data = [
-                        'supprimer' => 1,
-                        'userDelete' => Auth::id(),
-                        'deleted_at' => Carbon::now()
-                    ];
-
-                    DB::table('produits')
-                        ->where('id', $request->produits_id)
-                        ->decrement('quantite', $request->quantite);
-
-                    Approvisionnementsproduit::query()->where('id', '=', $request->id)->update($data);
-
-
-                    return response()->json(['success' => "la suppression a été effectuée avec succès"]);
-                }
-
-            } else {
-
-                return response()->json(['error' => "impossible d'effectuer cette suppression"]);
+            if (!isset($request->id) || !is_numeric($request->id)) {
+                return response()->json([
+                    'error' => "impossible d'effectuer cette suppression"
+                ], 400);
             }
 
+            $verif = Approvisionnementsproduit::find($request->id);
+
+            if (!$verif) {
+                return response()->json([
+                    'error' => "approvisionnement introuvable"
+                ], 404);
+            }
+
+            // ❌ suppression interdite si stock déjà utilisé
+            if ($verif->nombre != $verif->quantite) {
+                return response()->json([
+                    'error' => "Impossible de supprimer : ce stock a déjà été utilisé"
+                ], 422);
+            }
+
+            DB::beginTransaction();
+
+            try {
+
+                // 🧮 retour stock produit
+                DB::table('produits')
+                    ->where('id', $request->produits_id)
+                    ->decrement('quantite', $request->quantite);
+
+                // 🗑 soft delete
+                $verif->update([
+                    'supprimer' => 1,
+                    'userDelete' => Auth::id(),
+                    'deleted_at' => Carbon::now()
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => "Suppression effectuée avec succès"
+                ]);
+
+            } catch (\Exception $e) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'error' => "Erreur serveur : " . $e->getMessage()
+                ], 500);
+            }
         }
 
     }

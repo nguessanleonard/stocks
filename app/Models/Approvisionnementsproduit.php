@@ -13,6 +13,7 @@ class Approvisionnementsproduit extends Model
         'approvisionnements_id',
         'produitsprixachats_id',
         'quantite',
+        'nombre',
         'userAdd',
         'userUpdate',
         'userDelete',
