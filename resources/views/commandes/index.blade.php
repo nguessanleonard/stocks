@@ -61,171 +61,174 @@
                                 </div>
                             </div>
                             @can('Ajouter une commande')
-                            <div class="panel-container show">
-                                <div class="panel-content p-0">
-                                    <form class="needs-validation" id="formAjoutClient">
-                                        <div class="panel-content">
-                                            <div class="form-row">
-                                                <div class="col-md-12 mb-12 mb-2">
-                                                    <label class="form-label" for="validationTooltip01">Le nom du
-                                                        Client <span
-                                                            class="text-danger"></span> </label>
-                                                    <select id="clients_id" name="clients_id"
-                                                            class="form-control select2-4">
+                                <div class="panel-container show">
+                                    <div class="panel-content p-0">
+                                        <form class="needs-validation" id="formAjoutClient">
+                                            <div class="panel-content">
+                                                <div class="form-row">
+                                                    <div class="col-md-12 mb-12 mb-2">
+                                                        <label class="form-label" for="validationTooltip01">Le nom du
+                                                            Client <span
+                                                                class="text-danger"></span> </label>
+                                                        <select id="clients_id" name="clients_id"
+                                                                class="form-control select2-4">
 
-                                                    </select>
+                                                        </select>
+
+                                                    </div>
 
                                                 </div>
 
-                                            </div>
-
-                                            <div class="col-12 mt-3 text-center">
-                                                <button type="button" id="btnScanQR" class="btn btn-primary">Scannez le
-                                                    code produit
-                                                </button>
-                                            </div>
-
-                                            <!-- Bouton pour afficher le champ matricule -->
-                                            <div class="col-12 mt-3 text-center">
-                                                <button type="button" id="toggleCode" class="btn btn-outline-primary">
-                                                    Saisir
-                                                    le code produit
-                                                </button>
-                                            </div>
-                                            <div id="produit" style="display:none;" class="mt-3">
-
-                                                <div class="form-group">
-                                                    <label>Code produit</label>
-                                                    <input type="text" id="inputCode" class="form-control"
-                                                           placeholder="Entrez le code">
-                                                </div>
-
-                                                <div class="text-center mt-2">
-                                                    <button type="button" id="btnRechercherCode"
-                                                            class="btn btn-success">
-                                                        Rechercher
+                                                <div class="col-12 mt-3 text-center">
+                                                    <button type="button" id="btnScanQR" class="btn btn-primary">Scannez
+                                                        le
+                                                        code produit
                                                     </button>
                                                 </div>
 
+                                                <!-- Bouton pour afficher le champ matricule -->
+                                                <div class="col-12 mt-3 text-center">
+                                                    <button type="button" id="toggleCode"
+                                                            class="btn btn-outline-primary">
+                                                        Saisir
+                                                        le code produit
+                                                    </button>
+                                                </div>
+                                                <div id="produit" style="display:none;" class="mt-3">
+
+                                                    <div class="form-group">
+                                                        <label>Code produit</label>
+                                                        <input type="text" id="inputCode" class="form-control"
+                                                               placeholder="Entrez le code">
+                                                    </div>
+
+                                                    <div class="text-center mt-2">
+                                                        <button type="button" id="btnRechercherCode"
+                                                                class="btn btn-success">
+                                                            Rechercher
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                                <div id="infosproduit" class="mt-3"></div>
+
                                             </div>
-                                            <div id="infosproduit" class="mt-3"></div>
 
-                                        </div>
+                                            <div class="col-12 mt-4 mb-2 text-center">
+                                                <button type="button" id="btnValider" class="btn btn-success">
+                                                    Valider la commande
+                                                </button>
+                                            </div>
+                                        </form>
 
-                                        <div class="col-12 mt-4 mb-2 text-center">
-                                            <button type="button" id="btnValider" class="btn btn-success">
-                                                Valider la commande
-                                            </button>
-                                        </div>
-                                    </form>
+                                    </div>
 
                                 </div>
-
-                            </div>
                             @endcan
                             @can('Liste des commandes')
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div id="panel-1" class="panel">
-                                        <div class="panel-hdr">
-                                            <h2>
-                                                Liste <span class="fw-300"><i>des Clients</i></span>
-                                            </h2>
-                                            <div class="panel-toolbar">
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div id="panel-1" class="panel">
+                                            <div class="panel-hdr">
+                                                <h2>
+                                                    Liste <span class="fw-300"><i>des Clients</i></span>
+                                                </h2>
+                                                <div class="panel-toolbar">
 
 
-                                                <button class="btn btn-panel" data-action="panel-close"
-                                                        data-toggle="tooltip" data-offset="0,10"
-                                                        data-original-title="Close"></button>
+                                                    <button class="btn btn-panel" data-action="panel-close"
+                                                            data-toggle="tooltip" data-offset="0,10"
+                                                            data-original-title="Close"></button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="panel-container show">
-                                            <div class="panel-content">
+                                            <div class="panel-container show">
+                                                <div class="panel-content">
 
-                                                <!-- datatable start -->
-                                                <table id="dt-basic-example"
-                                                       class="table table-bordered table-hover table-striped w-100">
-                                                    <thead class="bg-primary-600">
-                                                    <tr>
-                                                        <th>N°</th>
-                                                        <th>Produit</th>
-                                                        <th>code</th>
-                                                        <th>photo</th>
-                                                        <th>quantité</th>
-                                                        <th>Client</th>
-                                                        <th>mois|année</th>
-                                                        @canany(['Modification de la commande','Suppression de la commande'])
-                                                            <th>Actions</th>
-                                                        @endcanany
-                                                    </tr>
-                                                    </thead>
-
-                                                    <tbody>
-                                                    @php $i = 1 @endphp
-
-                                                    @foreach($commandes as $key)
-                                                        <tr class="gradeA" style="font-size: 10px;">
-                                                            <td>{{ $i++  }}</td>
-
-                                                            <td>{{ $key->produit }}</td>
-                                                            <td>{{ $key->code }}</td>
-                                                            <td class="text-center">
-                                                                <img src="{{ $key->photo }}"
-                                                                     class="img-fluid img-thumbnail zoom-click"
-                                                                     style="max-width:35px; max-height:35px; cursor: zoom-in;">
-                                                            </td>
-                                                            <td>{{ $key->quantiteproduitcommande }}</td>
-                                                            <td>{{ $key->client }}</td>
-                                                            <td>{{ $key->mois.'|'.$key->annee }}</td>
+                                                    <!-- datatable start -->
+                                                    <table id="dt-basic-example"
+                                                           class="table table-bordered table-hover table-striped w-100">
+                                                        <thead class="bg-primary-600">
+                                                        <tr>
+                                                            <th>N°</th>
+                                                            <th>Produit</th>
+                                                            <th>code</th>
+                                                            <th>photo</th>
+                                                            <th>quantité</th>
+                                                            <th>Client</th>
+                                                            <th>mois|année</th>
                                                             @canany(['Modification de la commande','Suppression de la commande'])
-                                                                <td class="text-center">
-                                                                    @can('Modification de la commande')
-                                                                        <a href="#" class="btnModifierCommandesproduit"
-                                                                           data-id="{{ $key->commandesproduits_id }}"
-                                                                           data-libelle="{{ $key->produit }}"
-                                                                           data-idproduitsprixvente="{{ $key->produitsprixventes_id }}"
-                                                                           data-idproduits="{{ $key->produits_id }}"
-                                                                           data-quantite="{{ $key->quantiteproduitcommande }}"
-                                                                           data-client="{{ $key->client }}"
-                                                                           data-commande="{{ $key->commande }}"
-                                                                           data-mois="{{ $key->mois }}"
-                                                                           data-annee="{{ $key->annee }}"
-                                                                        >
-                                                                            <div class="badge badge-default">
-                                                                                <i class="fas fa-pencil-alt"></i>
-                                                                            </div>
-                                                                        </a>
-                                                                    @endcan
-                                                                    @can('Suppression de la commande')
-                                                                        <a href="#"
-                                                                           data-id="{{ $key->commandesproduits_id}}"
-                                                                           data-libelle="{{ $key->produit }}"
-                                                                           data-idproduits="{{ $key->produits_id }}"
-                                                                           data-quantite="{{ $key->quantiteproduitcommande }}"
-                                                                           class="SuppressionCommandesproduits">
-                                                                            <div class=" badge badge-default"
-                                                                                 data-toggle="tooltip"
-                                                                                 data-placement="top"
-                                                                                 title="Supprimez  {{$key->produit}}">
-                                                                                <i class="fas fa-trash-alt"
-                                                                                   style="color: crimson"></i>
-                                                                            </div>
-                                                                        </a>
-                                                                    @endcan
-
-                                                                </td>
+                                                                <th>Actions</th>
                                                             @endcanany
                                                         </tr>
-                                                    @endforeach
-                                                    </tbody>
+                                                        </thead>
 
-                                                </table>
-                                                <!-- datatable end -->
+                                                        <tbody>
+                                                        @php $i = 1 @endphp
+
+                                                        @foreach($commandes as $key)
+                                                            <tr class="gradeA" style="font-size: 10px;">
+                                                                <td>{{ $i++  }}</td>
+
+                                                                <td>{{ $key->produit }}</td>
+                                                                <td>{{ $key->code }}</td>
+                                                                <td class="text-center">
+                                                                    <img src="{{ $key->photo }}"
+                                                                         class="img-fluid img-thumbnail zoom-click"
+                                                                         style="max-width:35px; max-height:35px; cursor: zoom-in;">
+                                                                </td>
+                                                                <td>{{ $key->quantiteproduitcommande }}</td>
+                                                                <td>{{ $key->client }}</td>
+                                                                <td>{{ $key->mois.'|'.$key->annee }}</td>
+                                                                @canany(['Modification de la commande','Suppression de la commande'])
+                                                                    <td class="text-center">
+                                                                        @can('Modification de la commande')
+                                                                            <a href="#"
+                                                                               class="btnModifierCommandesproduit"
+                                                                               data-id="{{ $key->commandesproduits_id }}"
+                                                                               data-libelle="{{ $key->produit }}"
+                                                                               data-idproduitsprixvente="{{ $key->produitsprixventes_id }}"
+                                                                               data-idproduits="{{ $key->produits_id }}"
+                                                                               data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                               data-client="{{ $key->client }}"
+                                                                               data-commande="{{ $key->commande }}"
+                                                                               data-mois="{{ $key->mois }}"
+                                                                               data-annee="{{ $key->annee }}"
+                                                                            >
+                                                                                <div class="badge badge-default">
+                                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                                </div>
+                                                                            </a>
+                                                                        @endcan
+                                                                        @can('Suppression de la commande')
+                                                                            <a href="#"
+                                                                               data-id="{{ $key->commandesproduits_id}}"
+                                                                               data-libelle="{{ $key->produit }}"
+                                                                               data-idproduits="{{ $key->produits_id }}"
+                                                                               data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                               class="SuppressionCommandesproduits">
+                                                                                <div class=" badge badge-default"
+                                                                                     data-toggle="tooltip"
+                                                                                     data-placement="top"
+                                                                                     title="Supprimez  {{$key->produit}}">
+                                                                                    <i class="fas fa-trash-alt"
+                                                                                       style="color: crimson"></i>
+                                                                                </div>
+                                                                            </a>
+                                                                        @endcan
+
+                                                                    </td>
+                                                                @endcanany
+                                                            </tr>
+                                                        @endforeach
+                                                        </tbody>
+
+                                                    </table>
+                                                    <!-- datatable end -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                             @endcan
                         </div>
 

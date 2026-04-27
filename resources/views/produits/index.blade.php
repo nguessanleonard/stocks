@@ -87,6 +87,7 @@
 
                                 </div>
                             </div>
+                            @can('Ajouter un produit')
                             <div class="panel-container show">
                                 <div class="panel-content p-0">
                                     <form class="needs-validation" id="formAjoutProduit">
@@ -152,104 +153,114 @@
                                 </div>
 
                             </div>
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div id="panel-1" class="panel">
-                                        <div class="panel-hdr">
-                                            <h2>
-                                                Liste <span class="fw-300"><i>des Fournisseurs</i></span>
-                                            </h2>
-                                            <div class="panel-toolbar">
+                            @endcan
+                            @can('Liste des produits')
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div id="panel-1" class="panel">
+                                            <div class="panel-hdr">
+                                                <h2>
+                                                    Liste <span class="fw-300"><i>des Fournisseurs</i></span>
+                                                </h2>
+                                                <div class="panel-toolbar">
 
 
-                                                <button class="btn btn-panel" data-action="panel-close"
-                                                        data-toggle="tooltip" data-offset="0,10"
-                                                        data-original-title="Close"></button>
+                                                    <button class="btn btn-panel" data-action="panel-close"
+                                                            data-toggle="tooltip" data-offset="0,10"
+                                                            data-original-title="Close"></button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="panel-container show">
-                                            <div class="panel-content">
+                                            <div class="panel-container show">
+                                                <div class="panel-content">
 
-                                                <!-- datatable start -->
-                                                <table id="dt-basic-example"
-                                                       class="table table-bordered table-hover table-striped w-100">
-                                                    <thead class="bg-primary-600">
-                                                    <tr>
-                                                        <th>N°</th>
-                                                        <th>Libelle</th>
-                                                        <th>quantité en stock</th>
-                                                        <th>codeqr</th>
+                                                    <!-- datatable start -->
+                                                    <table id="dt-basic-example"
+                                                           class="table table-bordered table-hover table-striped w-100">
+                                                        <thead class="bg-primary-600">
+                                                        <tr>
+                                                            <th>N°</th>
+                                                            <th>Libelle</th>
+                                                            <th>quantité en stock</th>
+                                                            <th>codeqr</th>
 
-                                                        <th>description</th>
-                                                        <th>image</th>
-                                                        <th>#</th>
-                                                    </tr>
-                                                    </thead>
-
-
-                                                    <tbody>
-                                                    @php $i = 1 @endphp
-
-                                                    @foreach($produits as $produit)
-                                                        <tr class="gradeA" style="font-size: 10px;">
-                                                            <td>{{ $i++  }}</td>
-
-                                                            <td>{{ $produit->libelle }}</td>
-                                                            <td>{{ $produit->quantite }}</td>
-                                                            <td>
-                                                                <img src="data:image/png;base64,{{ $produit->qrcode }}"
-                                                                     class="img-fluid img-thumbnail zoom-click"
-                                                                     style="max-width:35px; max-height:35px; cursor: zoom-in;">
-
-                                                            </td>
-
-                                                            <td>{{ $produit->description }}</td>
-                                                            <td class="text-center">
-                                                                <img src="{{ $produit->photo }}"
-                                                                     class="img-fluid img-thumbnail zoom-click"
-                                                                     style="max-width:35px; max-height:35px; cursor: zoom-in;">
-                                                            </td>
-                                                            <td class="text-center">
-
-                                                                <a href="#" class="btnModifierProduit"
-                                                                   data-id="{{ $produit->id }}"
-                                                                   data-libelle="{{ $produit->libelle }}"
-                                                                   data-description="{{ $produit->description }}"
-                                                                   data-code="{{ $produit->code }}"
-                                                                   data-qrcode="{{ $produit->qrcode }}"
-                                                                   data-photo="{{ $produit->photo }}"
-                                                                >
-                                                                    <div class="badge badge-default">
-                                                                        <i class="fas fa-pencil-alt"></i>
-                                                                    </div>
-                                                                </a>
-
-                                                                <a href="#"
-                                                                   data-id="{{ $produit->id }}"
-                                                                   data-libelle="{{ $produit->libelle }}"
-                                                                   class="SuppressionProduit">
-                                                                    <div class=" badge badge-default"
-                                                                         data-toggle="tooltip"
-                                                                         data-placement="top"
-                                                                         title="Supprimez  {{$produit->libelle}}">
-                                                                        <i class="fas fa-trash-alt"
-                                                                           style="color: crimson"></i>
-                                                                    </div>
-                                                                </a>
-
-                                                            </td>
+                                                            <th>description</th>
+                                                            <th>image</th>
+                                                            @canany(['Modification du produit','Suppression du produit'])
+                                                                <th>Actions</th>
+                                                            @endcanany
 
                                                         </tr>
-                                                    @endforeach
-                                                    </tbody>
+                                                        </thead>
 
-                                                </table>
-                                                <!-- datatable end -->
+                                                        <tbody>
+                                                        @php $i = 1 @endphp
+
+                                                        @foreach($produits as $produit)
+                                                            <tr class="gradeA" style="font-size: 10px;">
+                                                                <td>{{ $i++  }}</td>
+
+                                                                <td>{{ $produit->libelle }}</td>
+                                                                <td>{{ $produit->quantite }}</td>
+                                                                <td>
+                                                                    <img
+                                                                        src="data:image/png;base64,{{ $produit->qrcode }}"
+                                                                        class="img-fluid img-thumbnail zoom-click"
+                                                                        style="max-width:35px; max-height:35px; cursor: zoom-in;">
+
+                                                                </td>
+
+                                                                <td>{{ $produit->description }}</td>
+                                                                <td class="text-center">
+                                                                    <img src="{{ $produit->photo }}"
+                                                                         class="img-fluid img-thumbnail zoom-click"
+                                                                         style="max-width:35px; max-height:35px; cursor: zoom-in;">
+                                                                </td>
+                                                                @canany(['Modification du produit','Suppression du produit'])
+                                                                    <td class="text-center">
+                                                                        @can('Modification du produit')
+                                                                            <a href="#" class="btnModifierProduit"
+                                                                               data-id="{{ $produit->id }}"
+                                                                               data-libelle="{{ $produit->libelle }}"
+                                                                               data-description="{{ $produit->description }}"
+                                                                               data-code="{{ $produit->code }}"
+                                                                               data-qrcode="{{ $produit->qrcode }}"
+                                                                               data-photo="{{ $produit->photo }}"
+                                                                            >
+                                                                                <div class="badge badge-default">
+                                                                                    <i class="fas fa-pencil-alt"></i>
+                                                                                </div>
+                                                                            </a>
+                                                                        @endcan
+                                                                        @can('Suppression du produit')
+
+                                                                            <a href="#"
+                                                                               data-id="{{ $produit->id }}"
+                                                                               data-libelle="{{ $produit->libelle }}"
+                                                                               class="SuppressionProduit">
+                                                                                <div class=" badge badge-default"
+                                                                                     data-toggle="tooltip"
+                                                                                     data-placement="top"
+                                                                                     title="Supprimez  {{$produit->libelle}}">
+                                                                                    <i class="fas fa-trash-alt"
+                                                                                       style="color: crimson"></i>
+                                                                                </div>
+                                                                            </a>
+                                                                        @endcan
+                                                                    </td>
+                                                                @endcanany
+
+                                                            </tr>
+                                                        @endforeach
+                                                        </tbody>
+
+                                                    </table>
+                                                    <!-- datatable end -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endcan
                         </div>
 
                     </div>
