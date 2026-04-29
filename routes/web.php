@@ -4,6 +4,7 @@
     use App\Http\Controllers\ApprovisionnementsController;
     use App\Http\Controllers\ClientsController;
     use App\Http\Controllers\CommandesController;
+    use App\Http\Controllers\CompteController;
     use App\Http\Controllers\ConnexionController;
     use App\Http\Controllers\FournisseursController;
     use App\Http\Controllers\PermissionsController;
@@ -29,6 +30,8 @@
 
         Route::match(['get', 'post'], '/tableau-de-bord/', [TableaudebordController::class, 'index'])->name('tableaudebord.index');
 
+        Route::get('compte', [CompteController::class, 'index'])->name('compte.index');
+        Route::post('/compte/update', [CompteController::class, 'update'])->name('compte.update');
         // route des permissions
         Route::get('permissions', [PermissionsController::class, 'index'])->name('permissions.index');
         Route::match(['get', 'post'], 'permissions/ajouter', [PermissionsController::class, 'ajouter'])->name('permissions.ajouter');

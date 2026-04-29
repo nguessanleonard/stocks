@@ -28,6 +28,7 @@ class User extends Authenticatable
         'email',
         'password',
         'userAdd',
+        'photo',
         'userUpdate',
         'userDelete',
         'created_at',

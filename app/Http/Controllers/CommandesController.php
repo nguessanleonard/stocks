@@ -262,57 +262,7 @@
         }
 
 
-        public function update1(Request $request, $id)
-        {
 
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'quantite' => 'required|integer|min:1',
-                    'quantiteold' => 'required|integer|min:1',
-                    'produits_id' => 'required|integer|exists:produits,id',
-                    'commandesproduits_id' => 'integer|exists:commandesproduits,id',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            $data = $validator->validated();
-
-            $commproduit = Commandesproduit::find($id);
-
-            if (!$commproduit) {
-                return response()->json([
-                    'error' => 'Produit introuvable'
-                ], 404);
-            }
-
-            // Mise à jour
-            $commproduit->update([
-                'quantite' => $data['quantite'],
-                'userUpdate' => Auth::id(),
-                'updated_at' => now(),
-            ]);
-
-            // 🔥 Calcul différence
-            $difference = $data['quantite'] - $data['quantiteold'];
-
-            if ($difference > 0) {
-                Produit::where('id', $data['produits_id'])
-                    ->increment('quantite', $difference);
-            } elseif ($difference < 0) {
-                Produit::where('id', $data['produits_id'])
-                    ->decrement('quantite', abs($difference));
-            }
-
-            return response()->json([
-                'success' => "Mise à jour effectuée avec succès"
-            ]);
-        }
 
         public function update(Request $request, $id)
         {
@@ -474,41 +424,7 @@
             }
         }
 
-        public function confirmersuppression1(Request $request)
-        {
-            if (isset($request->id) && is_numeric($request->id) && !is_null($request->id)) {
 
-                $verif = Commandesproduit::find($request->id);
-
-
-                if (!$verif) {
-                    return response()->json([
-                        'errors' => [
-                            'produit' => ['suppression impossible']
-                        ]
-                    ], 422);
-                } else{
-                    $data = [
-                        'supprimer' => 1,
-                        'userDelete' => Auth::id(),
-                        'deleted_at' => Carbon::now()
-                    ];
-
-                    DB::table('produits')
-                        ->where('id', $request->produits_id)
-                        ->decrement('quantite', $request->quantite);
-
-                    Commandesproduit::query()->where('id', '=', $request->id)->update($data);
-
-                    return response()->json(['success' => "la suppression de ce produit a été effectuée avec succès"]);
-                }
-
-            } else {
-
-                return response()->json(['error' => "impossible d'effectuer cette suppression"]);
-            }
-
-        }
 
         public function confirmersuppression(Request $request)
         {

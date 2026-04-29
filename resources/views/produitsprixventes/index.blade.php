@@ -72,114 +72,116 @@
                                 </div>
                             </div>
                             @can('Ajouter le prix de vente')
-                            <div class="panel-container show">
-                                <div class="panel-content p-0">
-                                    <form class="needs-validation" id="formAjoutproduitsprixaventes">
-                                        <div class="panel-content">
-                                            <div class="form-row">
-                                                <div class="col-md-6 mb-6">
-                                                    <label class="form-label" for="validationTooltip01">Produit <span
-                                                            class="text-danger">*</span> </label>
-                                                    <select class="t form-control select2-4" name="produits_id"
-                                                            id="produits_id" required>
-                                                        <option value="">Sélectionnez le produit</option>
-                                                        @foreach($produits  as $produit)
-                                                            <option
-                                                                value="{{$produit->id}}">{{$produit->libelle.'('.$produit->code.')'}}</option>
-                                                        @endforeach
-                                                    </select>
+                                <div class="panel-container show">
+                                    <div class="panel-content p-0">
+                                        <form class="needs-validation" id="formAjoutproduitsprixaventes">
+                                            <div class="panel-content">
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-6">
+                                                        <label class="form-label" for="validationTooltip01">Produit
+                                                            <span
+                                                                class="text-danger">*</span> </label>
+                                                        <select class="t form-control select2-4" name="produits_id"
+                                                                id="produits_id" required>
+                                                            <option value="">Sélectionnez le produit</option>
+                                                            @foreach($produits  as $produit)
+                                                                <option
+                                                                    value="{{$produit->id}}">{{$produit->libelle.'('.$produit->code.')'}}</option>
+                                                            @endforeach
+                                                        </select>
+
+                                                    </div>
+                                                    <div class="col-md-6 mb-6">
+                                                        <label class="form-label">Prix d'achat <span
+                                                                class="text-danger">*</span></label>
+
+                                                        <input type="number"
+                                                               class="form-control"
+                                                               id="prixvente"
+                                                               name="prixvente"
+                                                               min="0"
+                                                               step="1"
+                                                               placeholder="Entrez le prix de vente du produit"
+                                                               required
+                                                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                    </div>
 
                                                 </div>
-                                                <div class="col-md-6 mb-6">
-                                                    <label class="form-label">Prix d'achat <span
-                                                            class="text-danger">*</span></label>
 
-                                                    <input type="number"
-                                                           class="form-control"
-                                                           id="prixvente"
-                                                           name="prixvente"
-                                                           min="0"
-                                                           step="1"
-                                                           placeholder="Entrez le prix de vente du produit"
-                                                           required
-                                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                                </div>
 
                                             </div>
+                                            <div
+                                                class="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row justify-content-center align-items-center">
+                                                <button class="btn btn-primary" type="submit">Valider</button>
+                                            </div>
+                                        </form>
 
-
-                                        </div>
-                                        <div
-                                            class="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row justify-content-center align-items-center">
-                                            <button class="btn btn-primary" type="submit">Valider</button>
-                                        </div>
-                                    </form>
+                                    </div>
 
                                 </div>
-
-                            </div>
                             @endcan
                             @can('Liste des prix de vente')
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div id="panel-1" class="panel">
-                                        <div class="panel-hdr">
-                                            <h2>
-                                                Liste <span class="fw-300"><i>des prix achat des produits</i></span>
-                                            </h2>
-                                            <div class="panel-toolbar">
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div id="panel-1" class="panel">
+                                            <div class="panel-hdr">
+                                                <h2>
+                                                    Liste <span class="fw-300"><i>des prix achat des produits</i></span>
+                                                </h2>
+                                                <div class="panel-toolbar">
 
 
-                                                <button class="btn btn-panel" data-action="panel-close"
-                                                        data-toggle="tooltip" data-offset="0,10"
-                                                        data-original-title="Close"></button>
+                                                    <button class="btn btn-panel" data-action="panel-close"
+                                                            data-toggle="tooltip" data-offset="0,10"
+                                                            data-original-title="Close"></button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="panel-container show">
-                                            <div class="panel-content">
+                                            <div class="panel-container show">
+                                                <div class="panel-content">
 
-                                                <!-- datatable start -->
-                                                <table id="dt-basic-example"
-                                                       class="table table-bordered table-hover table-striped w-100">
-                                                    <thead class="bg-primary-600">
-                                                    <tr>
-                                                        <th>N°</th>
-                                                        <th>Produit</th>
-                                                        <th>code</th>
-                                                        <th>Prix de vente</th>
-                                                        <th>image</th>
-
-                                                    </tr>
-                                                    </thead>
-
-                                                    <tbody>
-                                                    @php $i = 1 @endphp
-
-                                                    @foreach($produitsprixaventes as $key)
-
-                                                        <tr class="gradeA" style="font-size: 10px;">
-                                                            <td>{{ $i++  }}</td>
-
-                                                            <td>{{ $key->produit }}</td>
-                                                            <td>{{ $key->code }}</td>
-                                                            <td>{{ $key->montant }}</td>
-                                                            <td class="text-center">
-                                                                <img src="{{ $key->photo }}"
-                                                                     class="img-fluid img-thumbnail zoom-click"
-                                                                     style="max-width:35px; max-height:35px; cursor: zoom-in;">
-                                                            </td>
+                                                    <!-- datatable start -->
+                                                    <table id="dt-basic-example"
+                                                           class="table table-bordered table-hover table-striped w-100">
+                                                        <thead class="bg-primary-600">
+                                                        <tr>
+                                                            <th>N°</th>
+                                                            <th>Produit</th>
+                                                            <th>code</th>
+                                                            <th>Prix de vente</th>
+                                                            <th>image</th>
 
                                                         </tr>
-                                                    @endforeach
-                                                    </tbody>
+                                                        </thead>
 
-                                                </table>
-                                                <!-- datatable end -->
+                                                        <tbody>
+                                                        @php $i = 1 @endphp
+
+                                                        @foreach($produitsprixaventes as $key)
+
+                                                            <tr class="gradeA" style="font-size: 10px;">
+                                                                <td>{{ $i++  }}</td>
+
+                                                                <td>{{ $key->produit }}</td>
+                                                                <td>{{ $key->code }}</td>
+                                                                <td>{{ $key->montant }}</td>
+                                                                <td class="text-center">
+                                                                    <img src="{{ $key->photo }}"
+                                                                         class="img-fluid img-thumbnail zoom-click"
+                                                                         style="max-width:35px; max-height:35px; cursor: zoom-in;">
+                                                                </td>
+
+                                                            </tr>
+                                                        @endforeach
+                                                        </tbody>
+
+                                                    </table>
+                                                    <!-- datatable end -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endcan
                         </div>
 
                     </div>

@@ -53,4 +53,43 @@ class Commande extends Model
             ->orderBy('c.created_at', 'desc')
             ->get();
     }
+
+    public static function commandesanneemois($anneemois_id)
+    {
+        return DB::table('commandes as c')
+            ->join('commandesproduits as cp', 'cp.commandes_id', '=', 'c.id')
+            ->join('produitsprixventes as ppv', 'cp.produitsprixventes_id', '=', 'ppv.id')
+            ->join('prixventes as pv', 'ppv.prixventes_id', '=', 'pv.id')
+            ->join('anneesmois as am', 'c.anneesmois_id', '=', 'am.id')
+
+            ->where('c.supprimer', 0)
+            ->where('cp.supprimer', 0)
+            ->where('am.id', $anneemois_id)
+
+            ->selectRaw('DATE(c.created_at) as jour, SUM(cp.quantite * pv.montant) as total')
+
+            ->groupByRaw('DATE(c.created_at)')
+            ->orderBy('jour', 'asc')
+            ->get();
+    }
+    public static function commandesanneemoisgestionnaire($anneemois_id, $admins_id)
+    {
+        return DB::table('commandes as c')
+            ->join('commandesproduits as cp', 'cp.commandes_id', '=', 'c.id')
+            ->join('produitsprixventes as ppv', 'cp.produitsprixventes_id', '=', 'ppv.id')
+            ->join('prixventes as pv', 'ppv.prixventes_id', '=', 'pv.id')
+            ->join('anneesmois as am', 'c.anneesmois_id', '=', 'am.id')
+
+            ->where('c.supprimer', 0)
+            ->where('cp.supprimer', 0)
+            ->where('am.id', $anneemois_id)
+            ->where('c.userAdd', $admins_id)
+
+            // 🔥 IMPORTANT : alias + SUM correct
+            ->selectRaw('DATE(c.created_at) as jour, SUM(cp.quantite * pv.montant) as total')
+
+            ->groupByRaw('DATE(c.created_at)')
+            ->orderBy('jour', 'asc')
+            ->get();
+    }
 }
