@@ -19,16 +19,16 @@
     Route::get('/', function () {
         return Auth::check()
             ? redirect()->route('tableaudebord.index')
-            : redirect()->route('login.login');
+            : redirect()->route('login');
     });
 
-    Route::get('/', [ConnexionController::class, 'login'])->name('login.login');
+    Route::get('/', [ConnexionController::class, 'login'])->name('login');
     Route::post('/loguser', [ConnexionController::class, 'loguser'])->name('login.loguser');
 
     Route::middleware('auth')->group(function () {
 
 
-        Route::match(['get', 'post'], '/tableau-de-bord/', [TableaudebordController::class, 'index'])->name('tableaudebord.index');
+        Route::match(['get', 'post'], '/tableau-de-bord/{anneesmois_id?}', [TableaudebordController::class, 'index'])->name('tableaudebord.index');
 
         Route::get('compte', [CompteController::class, 'index'])->name('compte.index');
         Route::post('/compte/update', [CompteController::class, 'update'])->name('compte.update');
@@ -45,6 +45,8 @@
         Route::get('/roles/edit/{id}', [RolesController::class, 'edit'])->name('roles.edit');
         Route::put('/roles/update/{id}', [RolesController::class, 'update'])->name('roles.update');
 
+        //Années Mois
+        Route::get('/listeanneesmois', [TableaudebordController::class, 'listeanneesmois'])->name('listeanneesmois');
         // route admins
         Route::get('/admins', [AdminsController::class, 'index'])->name('admins.index');
         Route::get('/attribution-role-admins/edit/{id}', [AdminsController::class, 'edit'])->name('admins.edit');
@@ -80,12 +82,14 @@
 
         //Route Approvisonnements
         Route::get('/approvisionnements', [ApprovisionnementsController::class, 'index'])->name('approvisionnements.index');
+        Route::post('/approvisionnements/filtrer', [ApprovisionnementsController::class, 'filtrer'])->name('approvisionnements.filtrer');
         Route::post('/approvisionnements/ajouter', [ApprovisionnementsController::class, 'ajouter'])->name('approvisionnements.ajouter');
         Route::PUT('/approvisionnements/modification/{id}', [ApprovisionnementsController::class, 'update'])->name('approvisionnements.modification');
         Route::post('/approvisionnements/confirmer-suppression', [ApprovisionnementsController::class, 'confirmersuppression'])->name('approvisionnements.confirmer-suppression');
 
         //Route Commande
         Route::get('/commandes', [CommandesController::class, 'index'])->name('commandes.index');
+        Route::post('/commandes/filtrer', [CommandesController::class, 'filtrer'])->name('commandes.filtrer');
         Route::post('/commandes/ajouter', [CommandesController::class, 'ajouter'])->name('commandes.ajouter');
         Route::PUT('/commandes/modification/{id}', [CommandesController::class, 'update'])->name('commandes.modification');
         Route::post('/commandes/confirmer-suppression', [CommandesController::class, 'confirmersuppression'])->name('commandes.confirmer-suppression');

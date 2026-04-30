@@ -30,6 +30,23 @@
             return view('commandes.index', $data);
         }
 
+        public function filtrer(Request $request)
+        {
+
+            $debut = $request->date_debut;
+            $fin = $request->date_fin;
+
+            $data = [
+                'name' => 'Gestion',
+                'classe' => 'Connexion',
+                'vue' => 'approvisionnement',
+                'title' => 'Gestion des commandes',
+                'commandes' => Commande::commandesFilter($debut, $fin),
+            ];
+
+
+            return view('commandes.index', $data);
+        }
 
         function moisAnneeEnLettre($date = null)
         {
@@ -262,8 +279,6 @@
         }
 
 
-
-
         public function update(Request $request, $id)
         {
             $validator = Validator::make(
@@ -425,7 +440,6 @@
         }
 
 
-
         public function confirmersuppression(Request $request)
         {
             if (!isset($request->id) || !is_numeric($request->id)) {
@@ -460,10 +474,10 @@
                 $restant = $quantite;
 
                 $approvisionnements = DB::table('approvisionnementsproduits as appr')
-                    ->join('produitsprixachats as ppa','appr.produitsprixachats_id','=','ppa.id')
+                    ->join('produitsprixachats as ppa', 'appr.produitsprixachats_id', '=', 'ppa.id')
                     ->where('ppa.produits_id', $produitId)
                     ->orderBy('appr.created_at', 'desc') // 🔥 inverse FIFO
-                    ->select('appr.id','appr.nombre')
+                    ->select('appr.id', 'appr.nombre')
                     ->get();
 
                 foreach ($approvisionnements as $appro) {

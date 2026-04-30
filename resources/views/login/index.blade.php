@@ -70,7 +70,9 @@
                     <label class="custom-control-label" for="rememberme">Se souvenir de moi</label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-default float-center">Connexion</button>
+            <div class="col-12 mt-4 mb-2 text-center">
+                <button type="submit" class="btn btn-primary float-center">Connexion</button>
+            </div>
         </form>
     </div>
 

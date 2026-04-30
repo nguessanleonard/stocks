@@ -38,32 +38,6 @@
             }];
 
 
-        $.plot($("#flotPie"), dataSetPie,
-            {
-                series:
-                    {
-                        pie:
-                            {
-                                innerRadius: 0.5,
-                                show: true,
-                                radius: 1,
-                                label:
-                                    {
-                                        show: true,
-                                        radius: 2 / 3,
-                                        threshold: 0.1
-                                    }
-                            }
-                    },
-                legend:
-                    {
-                        show: false
-                    }
-            });
-
-
-
-
         /*
          * VECTOR MAP
          */

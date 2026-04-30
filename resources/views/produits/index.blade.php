@@ -181,9 +181,9 @@
                                                             <th>N°</th>
                                                             <th>Libelle</th>
                                                             <th>quantité en stock</th>
-                                                            <th>codeqr</th>
+                                                            <th class="d-none d-sm-table-cell">codeqr</th>
 
-                                                            <th>description</th>
+                                                            <th class="d-none d-sm-table-cell">description</th>
                                                             <th>image</th>
                                                             @canany(['Modification du produit','Suppression du produit'])
                                                                 <th>Actions</th>
@@ -201,7 +201,7 @@
 
                                                                 <td>{{ $produit->libelle }}</td>
                                                                 <td>{{ $produit->quantite }}</td>
-                                                                <td>
+                                                                <td class="d-none d-sm-table-cell">
                                                                     <img
                                                                         src="data:image/png;base64,{{ $produit->qrcode }}"
                                                                         class="img-fluid img-thumbnail zoom-click"
@@ -209,7 +209,7 @@
 
                                                                 </td>
 
-                                                                <td>{{ $produit->description }}</td>
+                                                                <td class="d-none d-sm-table-cell">{{ $produit->description }}</td>
                                                                 <td class="text-center">
                                                                     <img src="{{ $produit->photo }}"
                                                                          class="img-fluid img-thumbnail zoom-click"

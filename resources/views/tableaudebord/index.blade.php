@@ -49,14 +49,24 @@
                     <div class="col-lg-12">
                         <div id="panel-5" class="panel">
                             <div class="panel-hdr">
-                                <h2>Les statistique du mois</h2>
+                                <h2>Les statistique du mois|{{ $data['mois'].' '.$data['annee'] }}</h2>
+                                <div class="col-md-5 mb-5">
+
+                                    <select id="anneesmois_id" name="anneesmois_id"
+                                            class="form-control select2-4">
+
+                                    </select>
+
+                                </div>
                             </div>
                             <div class="panel-container show">
                                 <div class="panel-content">
                                     <h5>Vente/ du mois en cours</h5>
+
                                     <div id="flotBar1" style="width: 100%; height: 160px;"></div>
                                 </div>
                             </div>
+
                         </div>
                         <div id="panel-6" class="panel">
                             <div class="panel-hdr">
@@ -69,54 +79,8 @@
                                         <div class="col-md-6 d-flex align-items-center">
                                             <div id="flotPie" class="w-100" style="height:250px"></div>
                                         </div>
-                                        <div class="col-md-6 col-lg-5 mr-lg-auto">
-                                            <div class="d-flex mt-2 mb-1 fs-xs text-primary">
-                                                Current Usage
-                                            </div>
-                                            <div class="progress progress-xs mb-3">
-                                                <div class="progress-bar" role="progressbar" style="width: 70%;"
-                                                     aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex mt-2 mb-1 fs-xs text-info">
-                                                Net Usage
-                                            </div>
-                                            <div class="progress progress-xs mb-3">
-                                                <div class="progress-bar bg-info-500" role="progressbar"
-                                                     style="width: 30%;" aria-valuenow="30" aria-valuemin="0"
-                                                     aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex mt-2 mb-1 fs-xs text-warning">
-                                                Users blocked
-                                            </div>
-                                            <div class="progress progress-xs mb-3">
-                                                <div class="progress-bar bg-warning-500" role="progressbar"
-                                                     style="width: 40%;" aria-valuenow="40" aria-valuemin="0"
-                                                     aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex mt-2 mb-1 fs-xs text-danger">
-                                                Custom cases
-                                            </div>
-                                            <div class="progress progress-xs mb-3">
-                                                <div class="progress-bar bg-danger-500" role="progressbar"
-                                                     style="width: 15%;" aria-valuenow="15" aria-valuemin="0"
-                                                     aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex mt-2 mb-1 fs-xs text-success">
-                                                Test logs
-                                            </div>
-                                            <div class="progress progress-xs mb-3">
-                                                <div class="progress-bar bg-success-500" role="progressbar"
-                                                     style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
-                                                     aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex mt-2 mb-1 fs-xs text-dark">
-                                                Uptime records
-                                            </div>
-                                            <div class="progress progress-xs mb-3">
-                                                <div class="progress-bar bg-fusion-500" role="progressbar"
-                                                     style="width: 10%;" aria-valuenow="10" aria-valuemin="0"
-                                                     aria-valuemax="100"></div>
-                                            </div>
+                                        <div class="col-md-6 col-lg-5 mr-lg-auto" id="progressContainer">
+                                            <!-- contenu dynamique -->
                                         </div>
                                     </div>
                                 </div>
@@ -155,43 +119,115 @@
 @include('layouts.js')
 @include('layouts.calendar')
 <script>
+    // =========================
+    // DONNÉES LARAVEL (UNE SEULE FOIS)
+    // =========================
+    var repartitionproduit = @json($repartitionproduit);
     let dataFromLaravel = @json($chartData);
 
+    // =========================
+    // PROGRESS BARS DYNAMIQUES
+    // =========================
+    (function () {
+
+        var html = '';
+
+        if (!repartitionproduit || repartitionproduit.length === 0) {
+
+            html = "<div class='text-muted'>Aucune donnée disponible</div>";
+
+        } else {
+
+            var totalGlobal = 0;
+
+            repartitionproduit.forEach(function (item) {
+                totalGlobal += parseFloat(item.totalvente);
+            });
+
+            var colors = [
+                'bg-primary',
+                'bg-info-500',
+                'bg-warning-500',
+                'bg-danger-500',
+                'bg-success-500',
+                'bg-fusion-500'
+            ];
+
+            repartitionproduit.forEach(function (item, index) {
+
+                var valeur = parseFloat(item.totalvente);
+                var pourcentage = totalGlobal > 0 ? (valeur / totalGlobal) * 100 : 0;
+
+                html += `
+                    <div class="d-flex mt-2 mb-1 fs-xs text-primary">
+                        ${item.produit} (${valeur.toLocaleString()} FCFA)
+                    </div>
+
+                    <div class="progress progress-xs mb-3">
+                        <div class="progress-bar ${colors[index % colors.length]}"
+                             role="progressbar"
+                             style="width: ${pourcentage.toFixed(2)}%;">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById('progressContainer').innerHTML = html;
+
+    })();
+
+    // =========================
+    // PIE CHART DATASET
+    // =========================
+    var dataSetPie = (repartitionproduit || []).map(function (item) {
+        return {
+            label: item.produit,
+            data: parseFloat(item.totalvente)
+        };
+    });
+
+    // =========================
+    // INIT GRAPHIQUES
+    // =========================
     $(function () {
 
+        // =========================
+        // BAR CHART
+        // =========================
         $.plot("#flotBar1", [
-                {
-                    data: dataFromLaravel,
-                    bars: {
-                        show: true,
-                        lineWidth: 0,
-                        fillColor: myapp_get_color.fusion_50,
-                        barWidth: 0.6,
-                        align: "center"
-                    }
-                }
-            ],
             {
-                grid: {
-                    hoverable: true,
-                    clickable: true,
-                    borderWidth: 1,
-                    borderColor: "#eee"
-                },
-
-                xaxis: {
-                    tickDecimals: 0,
-                    tickSize: 1
-                },
-
-                yaxis: {
-                    min: 0,
-                    tickFormatter: function (v) {
-                        return v.toLocaleString() + " FCFA";
-                    }
+                data: dataFromLaravel,
+                bars: {
+                    show: true,
+                    lineWidth: 0,
+                    fillColor: myapp_get_color.fusion_50,
+                    barWidth: 0.6,
+                    align: "center"
                 }
-            });
-        // tooltip
+            }
+        ], {
+            grid: {
+                hoverable: true,
+                clickable: true,
+                borderWidth: 1,
+                borderColor: "#eee"
+            },
+            xaxis: {
+                tickDecimals: 0,
+                tickSize: 1
+            },
+            yaxis: {
+                min: 0,
+                tickFormatter: function (v) {
+                    return v.toLocaleString() + " FCFA";
+                }
+            }
+        });
+
+        // =========================
+        // TOOLTIP BAR CHART
+        // =========================
         let tooltip = $("<div id='tooltip'></div>").css({
             position: "absolute",
             display: "none",
@@ -203,22 +239,120 @@
             zIndex: 9999
         }).appendTo("body");
 
-// hover
-        $("#flotBar1").bind("plothover", function (event, pos, item) {
+        function showTooltip(x, y, value) {
+            tooltip.html(value.toLocaleString() + " FCFA")
+                .css({
+                    top: y - 40,
+                    left: x + 10
+                })
+                .fadeIn(150);
+        }
 
+        $("#flotBar1").bind("plothover", function (event, pos, item) {
             if (item) {
                 let value = item.datapoint[1];
-
-                tooltip.html(value.toLocaleString() + " FCFA")
-                    .css({
-                        top: item.pageY - 40,
-                        left: item.pageX + 10
-                    })
-                    .fadeIn(150);
-
+                showTooltip(pos.pageX, pos.pageY, value);
             } else {
                 tooltip.hide();
             }
+        });
+
+        $("#flotBar1").bind("plotclick", function (event, pos, item) {
+            if (item) {
+                let value = item.datapoint[1];
+
+                showTooltip(pos.pageX, pos.pageY, value);
+
+                setTimeout(function () {
+                    tooltip.fadeOut(200);
+                }, 1500);
+            }
+        });
+
+        // =========================
+        // PIE CHART
+        // =========================
+        if (dataSetPie.length > 0) {
+            $.plot($("#flotPie"), dataSetPie, {
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 1,
+                        innerRadius: 0.5,
+                        label: {
+                            show: true,
+                            radius: 2 / 3,
+                            threshold: 0.05,
+                            formatter: function (label, series) {
+                                return "<div style='font-size:12px;text-align:center;color:white;'>"
+                                    + label + "<br>" + Math.round(series.percent) + "%</div>";
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    show: false
+                }
+            });
+        } else {
+            $("#flotPie").html("<div class='text-muted'>Aucune donnée disponible</div>");
+        }
+
+    });
+
+    // =========================
+    // AJAX LISTE MOIS/ANNÉE
+    // =========================
+    $(document).ready(function () {
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        $.ajax({
+            url: "{{ route('listeanneesmois') }}",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+
+                let selectAjout = $('#anneesmois_id');
+
+                selectAjout.empty().append('<option value="">Sélectionnez le mois</option>');
+
+                $.each(data, function (key, value) {
+                    selectAjout.append(
+                        '<option value="' + value.id + '">' +
+                        value.mois + '(' + value.annee + ')' +
+                        '</option>'
+                    );
+                });
+            },
+            error: function () {
+                console.error("Erreur lors du chargement des mois.");
+            }
+        });
+
+        $('#anneesmois_id').on('change', function () {
+
+            let anneesmois_id = $(this).val();
+
+            $.ajax({
+                url: '/tableau-de-bord/' + anneesmois_id,
+                type: 'GET',
+                success: function () {
+
+                    Toast.fire({
+                        icon: 'success',
+                        text: "Recherche effectuée avec succès"
+                    }).then(() => {
+                        window.location = "/tableau-de-bord/" + anneesmois_id;
+                    });
+
+                }
+            });
         });
 
     });

@@ -5,6 +5,7 @@
 
 <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <head>
     <meta charset="utf-8">
     <title>Commandes</title>
@@ -133,8 +134,29 @@
                                                 <h2>
                                                     Liste <span class="fw-300"><i>des Clients</i></span>
                                                 </h2>
-                                                <div class="panel-toolbar">
+                                                <form method="POST" action="{{ route('commandes.filtrer') }}">
+                                                    @csrf
 
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label>Date début</label>
+                                                            <input type="date" name="date_debut" id="date_debut" value="{{ $date_debut ?? '' }}" class="form-control" required>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <label>Date fin</label>
+                                                            <input type="date" name="date_fin" id="date_fin" value="{{ $date_fin ?? '' }}" class="form-control" required>
+                                                        </div>
+
+                                                        <div class="col-md-4 d-flex align-items-end">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                Rechercher
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                                <div class="panel-toolbar">
 
                                                     <button class="btn btn-panel" data-action="panel-close"
                                                             data-toggle="tooltip" data-offset="0,10"
@@ -142,20 +164,21 @@
                                                 </div>
                                             </div>
                                             <div class="panel-container show">
-                                                <div class="panel-content">
-
+                                                <div class="panel-content table-responsive">
                                                     <!-- datatable start -->
                                                     <table id="dt-basic-example"
-                                                           class="table table-bordered table-hover table-striped w-100">
+                                                           class="table table-bordered  table-hover table-striped w-100">
                                                         <thead class="bg-primary-600">
                                                         <tr>
                                                             <th>N°</th>
                                                             <th>Produit</th>
-                                                            <th>code</th>
-                                                            <th>photo</th>
+                                                            <th class="d-none d-sm-table-cell">code</th>
+                                                            <th class="d-none d-sm-table-cell">photo</th>
+                                                            <th>Prix</th>
                                                             <th>quantité</th>
-                                                            <th>Client</th>
-                                                            <th>mois|année</th>
+                                                            <th>Montant</th>
+                                                            <th class="d-none d-sm-table-cell">Client</th>
+                                                            <th class="d-none d-sm-table-cell">mois|année</th>
                                                             @canany(['Modification de la commande','Suppression de la commande'])
                                                                 <th>Actions</th>
                                                             @endcanany
@@ -163,64 +186,77 @@
                                                         </thead>
 
                                                         <tbody>
-                                                        @php $i = 1 @endphp
+                                                        @php
+                                                            $i = 1;
+                                                            $montanttatal = 0;
+                                                            $nbreproduit = 0;
+                                                        @endphp
 
                                                         @foreach($commandes as $key)
+
+                                                            @php
+                                                                $montantLigne = $key->quantiteproduitcommande * $key->montant;
+                                                                $montanttatal += $montantLigne;
+                                                                $nbreproduit += $key->quantiteproduitcommande;
+                                                            @endphp
+
                                                             <tr class="gradeA" style="font-size: 10px;">
-                                                                <td>{{ $i++  }}</td>
+
+                                                                <td>{{ $i++ }}</td>
 
                                                                 <td>{{ $key->produit }}</td>
-                                                                <td>{{ $key->code }}</td>
-                                                                <td class="text-center">
+                                                                <td class="d-none d-sm-table-cell">{{ $key->code }}</td>
+
+                                                                <td class="text-center d-none d-sm-table-cell">
                                                                     <img src="{{ $key->photo }}"
                                                                          class="img-fluid img-thumbnail zoom-click"
                                                                          style="max-width:35px; max-height:35px; cursor: zoom-in;">
                                                                 </td>
+
+                                                                <td>{{ $key->montant }}</td>
                                                                 <td>{{ $key->quantiteproduitcommande }}</td>
-                                                                <td>{{ $key->client }}</td>
+
+                                                                <td>{{ $key->quantiteproduitcommande*$key->montant }}</td>
+
+                                                                <td class="d-none d-sm-table-cell">{{ $key->client }}</td>
                                                                 <td>{{ $key->mois.'|'.$key->annee }}</td>
+
                                                                 @canany(['Modification de la commande','Suppression de la commande'])
                                                                     <td class="text-center">
                                                                         @can('Modification de la commande')
                                                                             <a href="#"
                                                                                class="btnModifierCommandesproduit"
-                                                                               data-id="{{ $key->commandesproduits_id }}"
-                                                                               data-libelle="{{ $key->produit }}"
-                                                                               data-idproduitsprixvente="{{ $key->produitsprixventes_id }}"
-                                                                               data-idproduits="{{ $key->produits_id }}"
-                                                                               data-quantite="{{ $key->quantiteproduitcommande }}"
-                                                                               data-client="{{ $key->client }}"
-                                                                               data-commande="{{ $key->commande }}"
-                                                                               data-mois="{{ $key->mois }}"
-                                                                               data-annee="{{ $key->annee }}"
-                                                                            >
+                                                                               data-id="{{ $key->commandesproduits_id }}">
                                                                                 <div class="badge badge-default">
                                                                                     <i class="fas fa-pencil-alt"></i>
                                                                                 </div>
                                                                             </a>
                                                                         @endcan
+
                                                                         @can('Suppression de la commande')
                                                                             <a href="#"
-                                                                               data-id="{{ $key->commandesproduits_id}}"
-                                                                               data-libelle="{{ $key->produit }}"
-                                                                               data-idproduits="{{ $key->produits_id }}"
-                                                                               data-quantite="{{ $key->quantiteproduitcommande }}"
+                                                                               data-id="{{ $key->commandesproduits_id }}"
                                                                                class="SuppressionCommandesproduits">
-                                                                                <div class=" badge badge-default"
-                                                                                     data-toggle="tooltip"
-                                                                                     data-placement="top"
-                                                                                     title="Supprimez  {{$key->produit}}">
+                                                                                <div class="badge badge-default">
                                                                                     <i class="fas fa-trash-alt"
                                                                                        style="color: crimson"></i>
                                                                                 </div>
                                                                             </a>
                                                                         @endcan
-
                                                                     </td>
                                                                 @endcanany
+
                                                             </tr>
                                                         @endforeach
                                                         </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th colspan="5">Total</th>
+                                                            <th>{{ $nbreproduit }}</th>
+                                                            <th>{{ $montanttatal }}</th>
+                                                            <th colspan="3"></th>
+                                                        </tr>
+                                                        </tfoot>
 
                                                     </table>
                                                     <!-- datatable end -->
@@ -299,6 +335,8 @@
         </div>
     </div>
 </div>
+
+
 <!-- END Page Wrapper -->
 <!-- BEGIN Quick Menu -->
 <!-- to add more items, please make sure to change the variable '$menu-items: number;' in your _page-components-shortcut.scss -->
@@ -310,6 +348,7 @@
 <!-- BEGIN Page Settings -->
 @include('layouts.parametres')
 <!-- END Page Settings -->
+
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143247136-2"></script>
 <script>
@@ -323,7 +362,9 @@
 
     gtag('config', 'UA-143247136-2');
 
+
 </script>
+
 <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
 @include('layouts.js')
 @include('layouts.calendar')

@@ -98,7 +98,7 @@
 
             $request->session()->regenerateToken();
 
-            return redirect()->route("login.login");
+            return redirect()->route("login");
         }
 
     }

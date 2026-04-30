@@ -30,7 +30,23 @@
             return view('approvisionnements.index', $data);
         }
 
+        public function filtrer(Request $request)
+        {
 
+            $debut = $request->date_debut;
+            $fin = $request->date_fin;
+
+            $data = [
+                'name' => 'Gestion',
+                'classe' => 'Connexion',
+                'vue' => 'approvisionnement',
+                'title' => 'Gestion des approvisionnements',
+                'approvisionnements' => Approvisionnement::approvisionnementsfiltrer(),
+            ];
+
+
+            return view('approvisionnements.index', $data);
+        }
         function moisAnneeEnLettre($date = null)
         {
             Carbon::setLocale('fr');

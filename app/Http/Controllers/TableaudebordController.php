@@ -4,6 +4,7 @@
 
     use App\Models\Anneesmois;
     use App\Models\Commande;
+    use App\Models\Mois;
     use Carbon\Carbon;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
@@ -15,30 +16,45 @@
     class TableaudebordController extends Controller
     {
 
-        public function index()
+        public function index($anneesmois_id = 0)
         {
-            $m = $this->moisAnneeEnLettre();
-            $resultat = explode(' ', $m);
 
-            $mois = mb_strtoupper($resultat[0]);
-            $annee = (int) $resultat[1];
+            if (!empty($anneesmois_id) && $anneesmois_id != 0) {
 
-            $anneemois = Anneesmois::getannesmois_id($mois, $annee);
-            $anneemois_id = $anneemois->id ?? 0;
+                $anneesmois = Anneesmois::moisannes($anneesmois_id);
 
+                $anneemois_id = $anneesmois->id;
+
+                $mois = $anneesmois->mois;
+                $annee = (int)$anneesmois->annee;
+
+            } else {
+
+                $m = $this->moisAnneeEnLettre();
+                $resultat = explode(' ', $m);
+
+                $mois = mb_strtoupper($resultat[0]);
+                $annee = (int)$resultat[1];
+
+                $anneemois = Anneesmois::getannesmois_id($mois, $annee);
+
+                $anneemois_id = $anneemois->id ?? 0;
+            }
+
+            // dd($anneemois_id,$mois,$annee);
             if (auth()->user()->hasAnyRole(['admin', 'Super Admin'])) {
+
                 $commandes = Commande::commandesanneemois($anneemois_id);
+
+                $repartitionproduit = Commande::repartionproduit($anneemois_id);
 
             } else {
                 $commandes = Commande::commandesanneemoisgestionnaire($anneemois_id, Auth::id());
+
+                $repartitionproduit = Commande::repartionproduitgestionnaire($anneemois_id,Auth::id());
             }
 
-
-            $moisMap = [
-                'JANVIER'=>1,'FEVRIER'=>2,'MARS'=>3,'AVRIL'=>4,
-                'MAI'=>5,'JUIN'=>6,'JUILLET'=>7,'AOUT'=>8,
-                'SEPTEMBRE'=>9,'OCTOBRE'=>10,'NOVEMBRE'=>11,'DECEMBRE'=>12,
-            ];
+            $moisMap = Mois::getmois();
 
             $moisNum = $moisMap[$mois] ?? Carbon::now()->month;
 
@@ -55,7 +71,7 @@
                 $jour = Carbon::parse($cmd->jour)->day;
 
                 if (isset($dataParJour[$jour])) {
-                    $dataParJour[$jour] += (float) $cmd->total;
+                    $dataParJour[$jour] += (float)$cmd->total;
                 }
             }
 
@@ -64,8 +80,11 @@
             foreach ($dataParJour as $jour => $total) {
                 $chartData[] = [$jour, $total];
             }
-
-            return view('tableaudebord.index', compact('chartData'));
+            $data = [
+                'mois' => $mois,
+                'annee' => $annee
+            ];
+            return view('tableaudebord.index', compact('chartData', 'data','repartitionproduit'));
         }
 
         function moisAnneeEnLettre($date = null)
@@ -77,6 +96,13 @@
             return $date->translatedFormat('F Y');
         }
 
+        public function listeanneesmois()
+        {
+
+            $mois = Anneesmois::annesmois();
+
+            return response()->json($mois);
+        }
 
 
     }
