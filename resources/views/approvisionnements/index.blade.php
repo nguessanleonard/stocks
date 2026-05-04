@@ -262,10 +262,10 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <th colspan="5">Total</th>
+                                                            <th  class="d-none d-sm-table-cell" colspan="5">Total</th>
                                                             <th>{{ $nbreproduit }}</th>
-                                                            <th class="d-none d-sm-table-cell">{{ $montanttatal }}</th>
-                                                            <th colspan="3"></th>
+                                                            <th >{{ $montanttatal }}</th>
+                                                            <th  class="d-none d-sm-table-cell" colspan="3"></th>
                                                         </tr>
                                                         </tfoot>
                                                     </table>
