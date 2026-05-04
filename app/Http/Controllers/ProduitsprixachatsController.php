@@ -60,6 +60,7 @@
             if (!empty($prixachats_id)) {
 
                 $prixachats_id = $prixachats->id;
+
             } else {
 
                 $prixachats = Prixachat::query()->create(['montant' => $data['prixachat'], 'userAdd' => Auth::id()]);
@@ -72,6 +73,7 @@
                 Produitsprixachat::query()->where('id', $prixachatproduit->id)->update(['statut' => 0, 'userUpdate' => Auth::id()]);
 
                 $dataProduitsprixachat = [
+
                     'produits_id' => $data['produits_id'],
 
                     'prixachats_id' => $prixachats->id,

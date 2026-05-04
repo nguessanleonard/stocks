@@ -109,7 +109,13 @@
 
                                             </div>
                                             <div class="form-row">
-                                                <div class="col-md-12 mb-12">
+                                                <div class="col-md-6 mb-6">
+                                                    <label class="form-label" for="validationTooltip02">code barre <span
+                                                            class="text-danger"></span></label>
+                                                    <input type="text" class="form-control" id="codebarre" name="codebarre"
+                                                           placeholder="Entrez le code barre du produit" >
+                                                </div>
+                                                <div class="col-md-6 mb-6">
                                                     <label class="form-label"
                                                            for="validationTooltip04">Description </label>
                                                     <input type="text" name="description" id="description"

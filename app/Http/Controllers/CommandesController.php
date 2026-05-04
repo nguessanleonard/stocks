@@ -135,6 +135,7 @@
 
         public function ajouter(Request $request)
         {
+
             $validator = Validator::make(
                 $request->all(),
                 [
@@ -194,18 +195,20 @@
 
                 foreach ($request->produits as $item) {
 
-                    $produitId = $item['produits_id'];
+                    $produitId = intval($item['produits_id']);
                     $quantite = $item['quantite'];
 
                     // 🔒 1. Vérification stock total
                     $totalStock = DB::table('approvisionnementsproduits as appr')
                         ->join('produitsprixachats as ppa', 'appr.produitsprixachats_id', '=', 'ppa.id')
                         ->where('ppa.produits_id', $produitId)
-                        ->where('appr.supprimer', 0)
+
                         ->sum('appr.nombre');
 
+                    $totalStock = $totalStock ?? 0;
+                    $produit=Produit::query()->where('id',$produitId)->first();
                     if ($totalStock < $quantite) {
-                        throw new \Exception("Stock insuffisant pour le produit ID $produitId");
+                        throw new \Exception("Stock insuffisant pour le produit ID $produit->libelle");
                     }
 
                     // 📝 2. Enregistrement ligne commande
@@ -256,7 +259,7 @@
 
                     // ❌ Sécurité finale FIFO
                     if ($quantiteRestante > 0) {
-                        throw new \Exception("Erreur FIFO sur produit ID $produitId");
+                        throw new \Exception("Erreur FIFO sur produit ID $produit->libelle");
                     }
                 }
 

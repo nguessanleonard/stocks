@@ -117,7 +117,7 @@
                 ->where('cp.supprimer', 0)
                 ->where('am.id', $anneemois_id)
                 ->selectRaw('SUM(cp.quantite * pv.montant) as totalvente, p.libelle as produit')
-                ->groupBy('p.libelle')
+                ->groupBy('p.id', 'p.libelle')
                 ->orderBy('p.libelle', 'asc')
                 ->get();
         }
@@ -135,7 +135,7 @@
                 ->where('am.id', $anneemois_id)
                 ->where('c.userAdd', $admins_id)
                 ->selectRaw('SUM(cp.quantite * pv.montant) as totalvente, p.libelle as produit')
-                ->groupBy('p.libelle')
+                ->groupBy('p.id', 'p.libelle')
                 ->orderBy('p.libelle', 'asc')
                 ->get();
         }

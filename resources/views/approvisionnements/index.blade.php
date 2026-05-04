@@ -174,13 +174,13 @@
                                                            class="table table-bordered table-hover table-striped w-100">
                                                         <thead class="bg-primary-600">
                                                         <tr>
-                                                            <th>N°</th>
+                                                            <th class="d-none d-sm-table-cell">N°</th>
                                                             <th>Produit</th>
                                                             <th class="d-none d-sm-table-cell">code</th>
                                                             <th class="d-none d-sm-table-cell">photo</th>
                                                             <th>quantité livrée</th>
                                                             <th>quantité restante</th>
-                                                            <th>Montant</th>
+                                                            <th class="d-none d-sm-table-cell">Montant</th>
                                                             <th class="d-none d-sm-table-cell">fournisseur</th>
                                                             <th class="d-none d-sm-table-cell">mois|année</th>
                                                             @canany(['Modification de l approvisionnement','Suppression de l approvisionnement'])
@@ -202,17 +202,17 @@
                                                                 $nbreproduit += $key->quantiteproduitappro;
                                                             @endphp
                                                             <tr class="gradeA" style="font-size: 10px;">
-                                                                <td>{{ $i++  }}</td>
+                                                                <td class="d-none d-sm-table-cell">{{ $i++  }}</td>
 
-                                                                <td>{{ $key->produit }}</td>
-                                                                <td class="d-none d-sm-table-cell">{{ $key->code }}</td>
+                                                                <td class="d-none d-sm-table-cell">{{ $key->produit }}</td>
+                                                                <td >{{ $key->code }}</td>
                                                                 <td class="text-center d-none d-sm-table-cell">
                                                                     <img src="{{ $key->photo }}"
                                                                          class="img-fluid img-thumbnail zoom-click"
                                                                          style="max-width:35px; max-height:35px; cursor: zoom-in;">
                                                                 </td>
                                                                 <td>{{ $key->quantiteproduitappro }}</td>
-                                                                <td>{{ $key->nombre }}</td>
+                                                                <td >{{ $key->nombre }}</td>
                                                                 <td>{{ $key->quantiteproduitappro * $key->montant }}</td>
                                                                 <td class="d-none d-sm-table-cell">{{ $key->fournisseur }}</td>
                                                                 <td class="d-none d-sm-table-cell">{{ $key->mois.'|'.$key->annee }}</td>
@@ -264,7 +264,7 @@
                                                         <tr>
                                                             <th colspan="5">Total</th>
                                                             <th>{{ $nbreproduit }}</th>
-                                                            <th>{{ $montanttatal }}</th>
+                                                            <th class="d-none d-sm-table-cell">{{ $montanttatal }}</th>
                                                             <th colspan="3"></th>
                                                         </tr>
                                                         </tfoot>
@@ -296,10 +296,13 @@
 </div>
 <div class="modal fade" id="modalScan" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-3">
-            <h5>Scanner le code QR</h5>
-            <video id="qr-video" style="width:100%; border-radius:10px;"></video>
-            <canvas id="qr-canvas" style="display:none;"></canvas>
+        <div class="modal-content p-3">
+
+            <h5 class="text-center mb-3">Scanner le code</h5>
+
+            <!-- 🔥 ZONE CAMÉRA -->
+            <div id="reader" style="width:100%"></div>
+
         </div>
     </div>
 </div>
@@ -370,7 +373,7 @@
     gtag('config', 'UA-143247136-2');
 
 </script>
-<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 @include('layouts.js')
 @include('layouts.calendar')
 <script>
@@ -408,19 +411,26 @@
             }
         });
 
-        // ===============================
-        // TOGGLE CHAMP SAISIE
-        // ===============================
+
+// VARIABLE GLOBALE
+// ===============================
+        let html5QrCode = null;
+
+// ===============================
+// TOGGLE SAISIE MANUELLE
+// ===============================
         $('#toggleCode').on('click', function () {
             $('#produit').toggle();
+            $('#inputCode').focus();
         });
 
-        // ===============================
-        // RECHERCHE PAR CODE MANUEL
-        // ===============================
+
+// ===============================
+// RECHERCHE MANUELLE
+// ===============================
         $('#btnRechercherCode').on('click', function () {
 
-            let code = $('#inputCode').val();
+            let code = $('#inputCode').val().trim();
 
             if (code === '') {
                 Swal.fire({
@@ -430,95 +440,86 @@
                 return;
             }
 
-            rechercherProduit({qr_code: code});
+            // ✅ CORRECTION
+            rechercherProduit({ code: code });
         });
 
-        // ===============================
-        // SCAN QR CODE
-        // ===============================
-        $('#btnScanQR').on('click', async function () {
+
+// ===============================
+// SCAN QR + CODE BARRE
+// ===============================
+        $('#btnScanQR').on('click', function () {
 
             $('#modalScan').modal('show');
 
-            const video = document.getElementById('qr-video');
+            // 🔥 attendre que le modal soit visible
+            $('#modalScan').off('shown.bs.modal').on('shown.bs.modal', function () {
 
-            try {
+                html5QrCode = new Html5Qrcode("reader");
 
-                const constraints = {
-                    video: {
-                        facingMode: {exact: "environment"} // 🔥 force caméra arrière
-                    }
-                };
+                html5QrCode.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 100,
+                        qrbox: 250
+                    },
 
-                // fallback si "exact" échoue
-                let stream;
+                    // ✅ SUCCÈS SCAN
+                    (decodedText) => {
 
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia(constraints);
-                } catch (e) {
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        video: {facingMode: "environment"}
-                    });
-                }
-
-                video.srcObject = stream;
-                video.setAttribute("playsinline", true); // 🔥 important iOS
-                video.play();
-
-                const canvas = document.getElementById('qr-canvas');
-                const context = canvas.getContext('2d');
-
-                const scan = () => {
-
-                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-
-                        canvas.height = video.videoHeight;
-                        canvas.width = video.videoWidth;
-
-                        context.drawImage(video, 0, 0);
-
-                        const code = jsQR(
-                            context.getImageData(0, 0, canvas.width, canvas.height).data,
-                            canvas.width,
-                            canvas.height
-                        );
-
-                        if (code) {
-
-                            stream.getTracks().forEach(track => track.stop());
+                        html5QrCode.stop().then(() => {
                             $('#modalScan').modal('hide');
 
-                            rechercherProduit({qr_code: code.data});
-                            return;
-                        }
-                    }
+                            // 🔥 UNIFIÉ (QR + BARCODE)
+                            rechercherProduit({ code: decodedText });
 
-                    requestAnimationFrame(scan);
-                };
+                        }).catch(err => console.error(err));
+                    },
 
-                scan();
+                    // ignore erreurs scan
+                    (errorMessage) => {}
+                ).catch(err => {
 
-            } catch (err) {
+                    console.error(err);
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Caméra inaccessible',
-                    text: 'Vérifiez les permissions du navigateur'
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Caméra inaccessible',
+                        text: 'Vérifiez les permissions ou utilisez HTTPS'
+                    });
                 });
-            }
+
+            });
+
         });
 
-        // ===============================
-        // FONCTION UNIQUE RECHERCHE
-        // ===============================
+
+// ===============================
+// STOP CAMÉRA SI MODAL FERMÉ
+// ===============================
+        $('#modalScan').on('hidden.bs.modal', function () {
+
+            if (html5QrCode) {
+                html5QrCode.stop().catch(() => {});
+                html5QrCode.clear();
+                html5QrCode = null;
+            }
+
+        });
+
+
+// ===============================
+// FONCTION RECHERCHE PRODUIT
+// ===============================
         function rechercherProduit(data) {
 
             $.post("{{ route('produits.rechercheCodeorqrcode') }}", data)
+
                 .done(function (response) {
 
                     if (response.success) {
 
-                        // Si le tableau n'existe pas encore → on le crée
+                        // créer tableau si inexistant
                         if ($('#produitTable').length === 0) {
 
                             const html = `
@@ -543,68 +544,73 @@
 
                         let produitExiste = false;
 
-                        // Vérifier si le produit existe déjà
+                        // 🔥 COMPARER PAR ID (important)
                         $('#produitTable tr').each(function () {
-                            let code = $(this).data('code');
-                            if (code === response.code) {
+
+                            let id = $(this).data('id');
+
+                            if (id == response.produit_id) {
+
                                 produitExiste = true;
+
                                 let inputQte = $(this).find('.quantite');
                                 let prix = parseFloat($(this).find('.prix').text());
+
                                 let nouvelleQte = parseInt(inputQte.val()) + 1;
 
                                 inputQte.val(nouvelleQte);
 
-                                // Mise à jour montant
                                 $(this).find('.montant').text((prix * nouvelleQte).toFixed(2));
                             }
                         });
 
-                        // Si produit n'existe pas → nouvelle ligne
+                        // nouveau produit
                         if (!produitExiste) {
+
                             const newRow = `
-                                 <tr data-code="${response.code}">
-                                    <td class="d-none d-md-table-cell">
-                                        <img src="${response.photo}" style="max-height:80px;">
-                                    </td>
+                        <tr data-id="${response.produit_id}">
+                            <td class="d-none d-md-table-cell">
+                                <img src="${response.photo}" style="max-height:80px;">
+                            </td>
 
-                                    <td>
-                                        ${response.code}
-                                        <input type="hidden" name="produitsprixachats_id[]" value="${response.id}">
-                                        <input type="hidden" name="code[]" value="${response.code}">
-                                        <input type="hidden" name="produits_id[]" value="${response.produits_id}">
-                                    </td>
+                            <td>
+                                ${response.code}
+                                <input type="hidden" name="produitsprixachats_id[]" value="${response.produitsprixachats_id}">
+                                <input type="hidden" name="produits_id[]" value="${response.produit_id}">
+                                <input type="hidden" name="code[]" value="${response.code}">
+                            </td>
 
-                                    <td class="d-none d-md-table-cell">
-                                        ${response.libelle}
-                                    </td>
+                            <td class="d-none d-md-table-cell">
+                                ${response.libelle}
+                            </td>
 
-                                    <td class="d-none d-md-table-cell prix">
-                                        ${response.prix}
-                                    </td>
+                            <td class="d-none d-md-table-cell prix">
+                                ${response.prix}
+                            </td>
 
-                                    <td>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <button type="button" class="btn btn-sm btn-danger btn-moins">-</button>
+                            <td>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button type="button" class="btn btn-sm btn-danger btn-moins">-</button>
 
-                                            <input type="text" name="quantite[]" value="1"
-                                                   class="form-control mx-2 text-center quantite"
-                                                   style="width:60px;" readonly>
+                                    <input type="text" name="quantite[]" value="1"
+                                           class="form-control mx-2 text-center quantite"
+                                           style="width:60px;" readonly>
 
-                                            <button type="button" class="btn btn-sm btn-success btn-plus">+</button>
-                                        </div>
-                                    </td>
+                                    <button type="button" class="btn btn-sm btn-success btn-plus">+</button>
+                                </div>
+                            </td>
 
-                                    <td class="d-none d-md-table-cell montant">
-                                        ${parseFloat(response.prix).toFixed(2)}
-                                    </td>
+                            <td class="d-none d-md-table-cell montant">
+                                ${parseFloat(response.prix).toFixed(2)}
+                            </td>
 
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-danger btn-supprimer">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                `;
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger btn-supprimer">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
 
                             $('#produitTable').append(newRow);
                         }
@@ -616,6 +622,7 @@
                         });
                     }
                 })
+
                 .fail(function () {
                     Swal.fire({
                         icon: 'error',
@@ -624,24 +631,32 @@
                 });
         }
 
+        $(document).off('click', '.btn-plus').on('click', '.btn-plus', function () {
 
-        // Incrementer
-        $(document).on('click', '.btn-plus', function () {
-            let input = $(this).siblings('.quantite');
-            let value = parseInt(input.val());
-            input.val(value + 1);
+            let row = $(this).closest('tr');
+            let input = row.find('.quantite');
+            let prix = parseFloat(row.find('.prix').text().replace(/\s/g, ''));
+
+            let qte = parseInt(input.val() || 0) + 1;
+
+            input.val(qte);
+            row.find('.montant').text((prix * qte).toFixed(2));
         });
 
-        // Decrementer
-        $(document).on('click', '.btn-moins', function () {
-            let input = $(this).siblings('.quantite');
-            let value = parseInt(input.val());
+        $(document).off('click', '.btn-moins').on('click', '.btn-moins', function () {
 
-            if (value > 1) {
-                input.val(value - 1);
+            let row = $(this).closest('tr');
+            let input = row.find('.quantite');
+            let prix = parseFloat(row.find('.prix').text().replace(/\s/g, ''));
+
+            let qte = parseInt(input.val() || 0);
+
+            if (qte > 1) {
+                qte--;
+                input.val(qte);
+                row.find('.montant').text((prix * qte).toFixed(2));
             }
         });
-
         $(document).on('click', '.btn-supprimer', function () {
 
             let row = $(this).closest('tr');
@@ -659,32 +674,7 @@
             });
 
         });
-        $(document).on('click', '.btn-plus', function () {
 
-            let row = $(this).closest('tr');
-            let input = row.find('.quantite');
-            let prix = parseFloat(row.find('.prix').text());
-
-            let qte = parseInt(input.val()) + 1;
-            input.val(qte);
-
-            row.find('.montant').text((prix * qte).toFixed(2));
-        });
-
-        $(document).on('click', '.btn-moins', function () {
-
-            let row = $(this).closest('tr');
-            let input = row.find('.quantite');
-            let prix = parseFloat(row.find('.prix').text());
-
-            let qte = parseInt(input.val());
-
-            if (qte > 1) {
-                qte--;
-                input.val(qte);
-                row.find('.montant').text((prix * qte).toFixed(2));
-            }
-        });
 
         $('#btnValider').on('click', function () {
 

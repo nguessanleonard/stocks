@@ -70,7 +70,7 @@
                         </div>
                         <div id="panel-6" class="panel">
                             <div class="panel-hdr">
-                                <h2>statistique des produits vendus/js </h2>
+                                <h2>statistique des produits vendus/{{ $data['mois'].' '.$data['annee'] }} </h2>
                             </div>
                             <div class="panel-container show">
 

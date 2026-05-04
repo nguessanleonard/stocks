@@ -37,11 +37,13 @@
                     'description' => 'nullable|string',
                     'libelle' => 'required|string',
                     'code' => 'required|string|unique:produits,code',
+                    'codebarre' => 'nullable|string|unique:produits,codebarre',
                 ],
                 [
                     'libelle.required' => 'Le champ libellé est obligatoire.',
                     'code.required' => 'Le champ code est obligatoire.',
                     'code.unique' => 'Ce code existe déjà pour un autre produit.',
+                    'codebarre.unique' => 'Ce code barre existe déjà.',
                     'image.required' => 'L’image est obligatoire.',
                     'image.image' => 'Le fichier doit être une image.',
                     'image.mimes' => 'L’image doit être au format jpg, jpeg, png, gif ou webp.',
@@ -67,6 +69,9 @@
                 $imageBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
             }
 
+            $codeBarre = !empty($data['codebarre'])
+                ? mb_strtoupper($data['codebarre'])
+                : null;
 
             $qrCode = new QrCode(mb_strtoupper($data['code']));
             $writer = new PngWriter();
@@ -77,6 +82,7 @@
                 'libelle' => mb_strtoupper($data['libelle']),
                 'code' => mb_strtoupper($data['code']),
                 'description' => ucfirst($data['description']) ?? null,
+                'codebarre' => $codeBarre,
                 'qrcode' => $qr,
                 'photo' => $imageBase64,
                 'userAdd' => Auth::id(),
@@ -194,29 +200,28 @@
 
         public function rechercheCodeorqrcode(Request $request)
         {
-
+            //  dd($request->input());
             $infosproduit = null;
 
 
-            if ($request->qr_code) {
+            if ($request->code) {
 
-                $infosproduit = Produit::infosproduit($request->qr_code);
+                $infosproduit = Produit::infosproduit($request->code);
+
 
             } else {
 
                 $infosproduit = null;
             }
-
+       // dd($infosproduit);
             if ($infosproduit) {
                 return response()->json([
                     'success' => true,
-                    'id' => $infosproduit->id,
+                    'produit_id' => $infosproduit->produit_id,
+                    'produitsprixachats_id' => $infosproduit->produitsprixachats_id,
                     'libelle' => $infosproduit->libelle,
                     'code' => $infosproduit->code,
                     'prix' => $infosproduit->montant,
-                    'prixachats_id' => $infosproduit->prixachats_id,
-                    'produits_id' => $infosproduit->id,
-                    'produitsprixachats_id' => $infosproduit->produitsprixachats_id,
                     'photo' => $infosproduit->photo,
                 ]);
             }
@@ -225,14 +230,14 @@
                 'success' => false
             ]);
         }
+
         public function rechercheCodeorqrcodevente(Request $request)
         {
-
             $infosproduit = null;
 
-            if ($request->qr_code) {
+            if ($request->code) {
 
-                $infosproduit = Produit::infosproduitvente($request->qr_code);
+                $infosproduit = Produit::infosproduitvente($request->code);
 
             } else {
 
@@ -243,18 +248,16 @@
 
                 return response()->json([
                     'success' => true,
-                    'id' => $infosproduit->id,
+                    'produit_id' => $infosproduit->produit_id,
                     'libelle' => $infosproduit->libelle,
                     'code' => $infosproduit->code,
                     'prix' => $infosproduit->montant,
                     'stock' => $infosproduit->stock,
                     'prixventes_id' => $infosproduit->prixventes_id,
-                    'produits_id' => $infosproduit->id,
                     'produitsprixventes_id' => $infosproduit->produitsprixventes_id,
                     'photo' => $infosproduit->photo,
                 ]);
             }
-
             return response()->json([
                 'success' => false
             ]);

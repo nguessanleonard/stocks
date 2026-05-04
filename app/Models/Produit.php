@@ -13,6 +13,7 @@
 
             'libelle',
             'code',
+            'codebarre',
             'description',
             'photo',
             'qrcode',
@@ -39,13 +40,16 @@
         {
 
             return DB::table('produits as p')
-                ->join('produitsprixachats as ppa', 'ppa.produits_id', 'p.id')
+                ->join('produitsprixachats as ppa', 'ppa.produits_id', '=', 'p.id')
                 ->join('prixachats as pa', 'ppa.prixachats_id', '=', 'pa.id')
                 ->where('p.supprimer', 0)
-                ->where('p.code', $code)
+                ->where(function($query) use ($code) {
+                    $query->where('p.code', $code)
+                        ->orWhere('p.codebarre', $code);
+                })
                 ->where('ppa.statut', 1)
                 ->select([
-                    'p.id',
+                    'p.id as produit_id',
                     'p.libelle',
                     'p.code',
                     'p.photo',
@@ -62,14 +66,17 @@
                 ->join('produitsprixventes as ppv', 'ppv.produits_id', 'p.id')
                 ->join('prixventes as pv', 'ppv.prixventes_id', '=', 'pv.id')
                 ->where('p.supprimer', 0)
-                ->where('p.code', $code)
+                ->where(function($query) use ($code) {
+                    $query->where('p.code', $code)
+                        ->orWhere('p.codebarre', $code);
+                })
                 ->where('ppv.statut', 1)
                 ->select([
-                    'p.id',
+                    'p.id as produit_id',
                     'p.libelle',
                     'p.code',
-                    'p.quantite as stock',
                     'p.photo',
+                    'p.quantite as stock',
                     'pv.montant',
                     'pv.id as prixventes_id',
                     'ppv.id as produitsprixventes_id'
