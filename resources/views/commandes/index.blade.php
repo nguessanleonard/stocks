@@ -230,6 +230,11 @@
                                                                         @can('Modification de la commande')
                                                                             <a href="#"
                                                                                class="btnModifierCommandesproduit"
+                                                                               data-produit="{{ $key->produit }}"
+                                                                               data-idproduits="{{ $key->produits_id }}"
+                                                                               data-client="{{ $key->client }}"
+                                                                               data-commande="{{ $key->commande }}"
+                                                                               data-quantite="{{ $key->quantiteproduitcommande }}"
                                                                                data-id="{{ $key->commandesproduits_id }}">
                                                                                 <div class="badge badge-default">
                                                                                     <i class="fas fa-pencil-alt"></i>
@@ -240,6 +245,7 @@
                                                                         @can('Suppression de la commande')
                                                                             <a href="#"
                                                                                data-id="{{ $key->commandesproduits_id }}"
+                                                                               data-produit="{{ $key->produit }}"
                                                                                class="SuppressionCommandesproduits">
                                                                                 <div class="badge badge-default">
                                                                                     <i class="fas fa-trash-alt"
@@ -375,6 +381,13 @@
 
 @include('layouts.js')
 @include('layouts.calendar')
+<audio id="sonSuccess" preload="auto">
+    <source src="{{asset("assets/media/sons/beep_short.ogg")}}" type="audio/ogg">
+</audio>
+<audio id="sonErreur" preload="auto">
+    <source src="{{asset("assets/media/sons/clang_and_wobble")}}" type="audio/ogg">
+</audio>
+
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function () {
@@ -512,6 +525,18 @@
 // ===============================
 // FONCTION RECHERCHE PRODUIT
 // ===============================
+        function jouerSon(id) {
+            const audio = document.getElementById(id);
+
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(function () {
+                    console.log("Lecture audio bloquée par le navigateur");
+                });
+            }
+        }
+
+
         function rechercherProduit(data) {
 
             $.post("{{ route('produits.rechercheCodeorqrcodevente') }}", data)
@@ -519,6 +544,8 @@
                 .done(function (response) {
 
                     if (response.success) {
+
+                        jouerSon('sonSuccess');
 
                         // créer tableau si inexistant
                         if ($('#produitTable').length === 0) {
@@ -545,7 +572,7 @@
 
                         let produitExiste = false;
 
-                        // 🔥 COMPARER PAR ID (important)
+                        // COMPARER PAR ID
                         $('#produitTable tr').each(function () {
 
                             let id = $(this).data('id');
@@ -568,54 +595,57 @@
                         // nouveau produit
                         if (!produitExiste) {
                             const newRow = `
-                            <tr data-id="${response.produit_id}" data-code="${response.code}" data-stock="${response.stock}">
-                                    <td class="d-none d-md-table-cell">
-                                        <img src="${response.photo}" style="max-height:80px;">
-                                    </td>
+                        <tr data-id="${response.produit_id}" data-code="${response.code}" data-stock="${response.stock}">
+                            <td class="d-none d-md-table-cell">
+                                <img src="${response.photo}" style="max-height:80px;">
+                            </td>
 
-                                    <td>
-                                        ${response.code}
-                                        <input type="hidden" name="produitsprixventes_id[]" value="${response.produitsprixventes_id}">
-                                        <input type="hidden" name="code[]" value="${response.code}">
-                                        <input type="hidden" name="produits_id[]" value="${response.produit_id}">
-                                    </td>
+                            <td>
+                                ${response.code}
+                                <input type="hidden" name="produitsprixventes_id[]" value="${response.produitsprixventes_id}">
+                                <input type="hidden" name="code[]" value="${response.code}">
+                                <input type="hidden" name="produits_id[]" value="${response.produit_id}">
+                            </td>
 
-                                    <td class="d-none d-md-table-cell">
-                                        ${response.libelle}
-                                    </td>
+                            <td class="d-none d-md-table-cell">
+                                ${response.libelle}
+                            </td>
 
-                                    <td class="d-none d-md-table-cell prix">
-                                        ${response.prix}
-                                    </td>
+                            <td class="d-none d-md-table-cell prix">
+                                ${response.prix}
+                            </td>
 
-                                    <td>
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <button type="button" class="btn btn-sm btn-danger btn-moins">-</button>
+                            <td>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button type="button" class="btn btn-sm btn-danger btn-moins">-</button>
 
-                                            <input type="text" name="quantite[]" value="1"
-                                                   class="form-control mx-2 text-center quantite"
-                                                   style="width:60px;" readonly>
+                                    <input type="text" name="quantite[]" value="1"
+                                           class="form-control mx-2 text-center quantite"
+                                           style="width:60px;" readonly>
 
-                                            <button type="button" class="btn btn-sm btn-success btn-plus">+</button>
-                                        </div>
-                                    </td>
+                                    <button type="button" class="btn btn-sm btn-success btn-plus">+</button>
+                                </div>
+                            </td>
 
-                                    <td class="d-none d-md-table-cell montant">
-                                        ${parseFloat(response.prix).toFixed(2)}
-                                    </td>
+                            <td class="d-none d-md-table-cell montant">
+                                ${parseFloat(response.prix).toFixed(2)}
+                            </td>
 
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-danger btn-supprimer">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                `;
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger btn-supprimer">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
 
                             $('#produitTable').append(newRow);
                         }
 
                     } else {
+
+                        jouerSon('sonErreur');
+
                         Swal.fire({
                             icon: 'error',
                             title: 'Aucun résultat trouvé'
@@ -624,12 +654,16 @@
                 })
 
                 .fail(function () {
+
+                    jouerSon('sonErreur');
+
                     Swal.fire({
                         icon: 'error',
                         title: 'Erreur serveur'
                     });
                 });
         }
+
 
         $(document).off('click', '.btn-plus').on('click', '.btn-plus', function () {
 
@@ -946,7 +980,7 @@
             let commandesproduit_id = $(this).data('id');
 
             let produits_id = $(this).data('idproduits');
-            let libelle = $(this).data('libelle');
+            let libelle = $(this).data('produit');
             let quantiteold = $(this).data('quantite');
             let quantite_modif = $(this).data('quantite');
             let client = $(this).data('client');
@@ -1013,7 +1047,7 @@
             e.preventDefault();
 
             let commandesproduit_id = $(this).data('id');
-            let libelle = $(this).data('libelle');
+            let libelle = $(this).data('produit');
             let produits_id = $(this).data('idproduits');
             let quantite = $(this).data('quantite');
 

@@ -33,7 +33,7 @@
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'image' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+                    'image' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:9048',
                     'description' => 'nullable|string',
                     'libelle' => 'required|string',
                     'code' => 'required|string|unique:produits,code',
@@ -47,7 +47,7 @@
                     'image.required' => 'L’image est obligatoire.',
                     'image.image' => 'Le fichier doit être une image.',
                     'image.mimes' => 'L’image doit être au format jpg, jpeg, png, gif ou webp.',
-                    'image.max' => 'L’image ne doit pas dépasser 2 Mo.',
+                    'image.max' => 'L’image ne doit pas dépasser 9 Mo.',
                 ]
             );
 
@@ -101,7 +101,7 @@
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+                    'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:9048',
                     'description' => 'nullable|string',
                     'libelle' => 'required|string',
                     'code' => [
@@ -115,7 +115,7 @@
                     'code.required' => 'Le champ code est obligatoire.',
                     'image.image' => 'Le fichier doit être une image.',
                     'image.mimes' => 'L’image doit être au format jpg, jpeg, png, gif ou webp.',
-                    'image.max' => 'L’image ne doit pas dépasser 2 Mo.',
+                    'image.max' => 'L’image ne doit pas dépasser 9 Mo.',
                 ]
             );
             if ($validator->fails()) {

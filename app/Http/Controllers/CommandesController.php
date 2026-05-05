@@ -445,6 +445,7 @@
 
         public function confirmersuppression(Request $request)
         {
+
             if (!isset($request->id) || !is_numeric($request->id)) {
                 return response()->json([
                     'error' => "impossible d'effectuer cette suppression"
@@ -466,7 +467,7 @@
             try {
 
                 $produitId = $request->produits_id;
-                $quantite = $request->quantite;
+                $quantite = intval($request->quantite);
 
                 /*
                 ---------------------------------------------------

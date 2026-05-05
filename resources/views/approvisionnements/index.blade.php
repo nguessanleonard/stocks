@@ -348,6 +348,12 @@
         </div>
     </div>
 </div>
+<audio id="sonSuccess" preload="auto">
+    <source src="{{asset("assets/media/sons/beep_short.ogg")}}" type="audio/ogg">
+</audio>
+<audio id="sonErreur" preload="auto">
+    <source src="{{asset("assets/media/sons/clang_and_wobble")}}" type="audio/ogg">
+</audio>
 <!-- END Page Wrapper -->
 <!-- BEGIN Quick Menu -->
 <!-- to add more items, please make sure to change the variable '$menu-items: number;' in your _page-components-shortcut.scss -->
@@ -511,6 +517,17 @@
 // ===============================
 // FONCTION RECHERCHE PRODUIT
 // ===============================
+
+        function jouerSon(id) {
+            const audio = document.getElementById(id);
+
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(function () {
+                    console.log("Lecture audio bloquée par le navigateur");
+                });
+            }
+        }
         function rechercherProduit(data) {
 
             $.post("{{ route('produits.rechercheCodeorqrcode') }}", data)
@@ -519,6 +536,7 @@
 
                     if (response.success) {
 
+                        jouerSon('sonSuccess');
                         // créer tableau si inexistant
                         if ($('#produitTable').length === 0) {
 
@@ -616,6 +634,7 @@
                         }
 
                     } else {
+                        jouerSon('sonErreur');
                         Swal.fire({
                             icon: 'error',
                             title: 'Aucun résultat trouvé'
@@ -624,6 +643,7 @@
                 })
 
                 .fail(function () {
+                    jouerSon('sonErreur');
                     Swal.fire({
                         icon: 'error',
                         title: 'Erreur serveur'
