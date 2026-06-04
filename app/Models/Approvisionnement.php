@@ -48,6 +48,7 @@ class Approvisionnement extends Model
                 'apprp.quantite as quantiteproduitappro',
                 'apprp.nombre',
                 'appr.libelle as approvisionnement',
+                'appr.created_at',
                 'm.libelle as mois',
                 'a.libelle as annee'
             )
@@ -86,6 +87,7 @@ class Approvisionnement extends Model
                 'apprp.quantite as quantiteproduitappro',
                 'apprp.nombre',
                 'appr.libelle as approvisionnement',
+                'appr.created_at',
                 'm.libelle as mois',
                 'a.libelle as annee'
             )

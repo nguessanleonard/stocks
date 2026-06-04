@@ -166,23 +166,23 @@
                                                             data-original-title="Close"></button>
                                                 </div>
                                             </div>
-                                            <div class="panel-container show">
+                                            <div class="panel-container show stock-table-panel">
                                                 <div class="panel-content">
 
-                                                    <!-- datatable start -->
+                                                    <div class="stock-table-wrap">
                                                     <table id="dt-basic-example"
-                                                           class="table table-bordered table-hover table-striped w-100">
-                                                        <thead class="bg-primary-600">
+                                                           class="table stock-table table-hover w-100">
+                                                        <thead>
                                                         <tr>
-                                                            <th class="d-none d-sm-table-cell">N°</th>
+                                                            <th>Référence</th>
                                                             <th>Produit</th>
-                                                            <th class="d-none d-sm-table-cell">code</th>
-                                                            <th class="d-none d-sm-table-cell">photo</th>
-                                                            <th>quantité livrée</th>
-                                                            <th>quantité restante</th>
-                                                            <th class="d-none d-sm-table-cell">Montant</th>
-                                                            <th class="d-none d-sm-table-cell">fournisseur</th>
-                                                            <th class="d-none d-sm-table-cell">mois|année</th>
+                                                            <th>Fournisseur</th>
+                                                            <th>Statut</th>
+                                                            <th>Date</th>
+                                                            <th>Prix achat</th>
+                                                            <th>Livrée</th>
+                                                            <th>Restante</th>
+                                                            <th>Montant</th>
                                                             @canany(['Modification de l approvisionnement','Suppression de l approvisionnement'])
                                                                 <th>Actions</th>
                                                             @endcanany
@@ -201,27 +201,44 @@
                                                                 $montanttatal += $montantLigne;
                                                                 $nbreproduit += $key->quantiteproduitappro;
                                                             @endphp
-                                                            <tr class="gradeA" style="font-size: 10px;">
-                                                                <td class="d-none d-sm-table-cell">{{ $i++  }}</td>
-
-                                                                <td class="d-none d-sm-table-cell">{{ $key->produit }}</td>
-                                                                <td >{{ $key->code }}</td>
-                                                                <td class="text-center d-none d-sm-table-cell">
-                                                                    <img src="{{ $key->photo }}"
-                                                                         class="img-fluid img-thumbnail zoom-click"
-                                                                         style="max-width:35px; max-height:35px; cursor: zoom-in;">
+                                                            <tr class="gradeA">
+                                                                <td>
+                                                                    <span class="stock-ref">{{ $key->approvisionnement }}</span>
+                                                                    <div class="stock-meta">{{ $key->code }}</div>
                                                                 </td>
+                                                                <td>
+                                                                    <div class="stock-product-cell">
+                                                                        <img src="{{ $key->photo }}" class="stock-thumb zoom-click" style="cursor: zoom-in;">
+                                                                        <span>{{ $key->produit }}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ $key->fournisseur }}</td>
+                                                                <td>
+                                                                    @if($key->nombre <= 0)
+                                                                        <span class="stock-badge stock-badge-danger"><i class="fas fa-times-circle"></i> Épuisé</span>
+                                                                    @elseif($key->nombre < $key->quantiteproduitappro)
+                                                                        <span class="stock-badge stock-badge-warning"><i class="fas fa-hourglass-half"></i> Partiel</span>
+                                                                    @else
+                                                                        <span class="stock-badge stock-badge-success"><i class="fas fa-check-circle"></i> Disponible</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td>{{ !empty($key->created_at) ? \Carbon\Carbon::parse($key->created_at)->format('d/m/Y') : $key->mois.' '.$key->annee }}</td>
+                                                                <td>{{ number_format($key->montant, 0, ',', ' ') }}</td>
                                                                 <td>{{ $key->quantiteproduitappro }}</td>
-                                                                <td >{{ $key->nombre }}</td>
-                                                                <td>{{ $key->quantiteproduitappro * $key->montant }}</td>
-                                                                <td class="d-none d-sm-table-cell">{{ $key->fournisseur }}</td>
-                                                                <td class="d-none d-sm-table-cell">{{ $key->mois.'|'.$key->annee }}</td>
+                                                                <td>{{ $key->nombre }}</td>
+                                                                <td><strong>{{ number_format($montantLigne, 0, ',', ' ') }}</strong></td>
 
                                                                 @canany(['Modification de l approvisionnement','Suppression de l approvisionnement'])
-                                                                    <td class="text-center">
+                                                                    <td>
+                                                                        <div class="stock-action-group">
+                                                                            <button type="button" class="stock-action-btn" title="Voir"
+                                                                                    onclick="Swal.fire({title: '{{ addslashes($key->produit) }}', html: 'Fournisseur : {{ addslashes($key->fournisseur) }}<br>Quantité : {{ $key->quantiteproduitappro }}<br>Restante : {{ $key->nombre }}', icon: 'info'})">
+                                                                                <i class="fas fa-eye"></i>
+                                                                            </button>
                                                                         @can('Modification de l approvisionnement')
                                                                             <a href="#"
-                                                                               class="btnModifierApprovisionnementsproduit"
+                                                                               class="stock-action-btn btnModifierApprovisionnementsproduit"
+                                                                               title="Modifier"
                                                                                data-id="{{ $key->approvisionnementsproduits_id }}"
                                                                                data-libelle="{{ $key->produit }}"
                                                                                data-idproduitsprixachats="{{ $key->produitsprixachats_id }}"
@@ -232,28 +249,24 @@
                                                                                data-mois="{{ $key->mois }}"
                                                                                data-annee="{{ $key->annee }}"
                                                                             >
-                                                                                <div class="badge badge-default">
-                                                                                    <i class="fas fa-pencil-alt"></i>
-                                                                                </div>
+                                                                                <i class="fas fa-pencil-alt"></i>
                                                                             </a>
                                                                         @endcan
+                                                                            <button type="button" class="stock-action-btn" title="Imprimer" onclick="window.print()">
+                                                                                <i class="fas fa-print"></i>
+                                                                            </button>
                                                                         @can('Suppression de l approvisionnement')
                                                                             <a href="#"
                                                                                data-id="{{ $key->approvisionnementsproduits_id}}"
                                                                                data-libelle="{{ $key->produit }}"
                                                                                data-idproduits="{{ $key->produits_id }}"
                                                                                data-quantite="{{ $key->quantiteproduitappro }}"
-                                                                               class="SuppressionApprovisionnementsproduits">
-                                                                                <div class=" badge badge-default"
-                                                                                     data-toggle="tooltip"
-                                                                                     data-placement="top"
-                                                                                     title="Supprimez  {{$key->produit}}">
-                                                                                    <i class="fas fa-trash-alt"
-                                                                                       style="color: crimson"></i>
-                                                                                </div>
+                                                                               class="stock-action-btn stock-action-danger SuppressionApprovisionnementsproduits"
+                                                                               title="Supprimer">
+                                                                                <i class="fas fa-trash-alt"></i>
                                                                             </a>
                                                                         @endcan
-
+                                                                        </div>
                                                                     </td>
                                                                 @endcanany
 
@@ -262,14 +275,82 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <th  class="d-none d-sm-table-cell" colspan="5">Total</th>
+                                                            <th colspan="6">Total</th>
                                                             <th>{{ $nbreproduit }}</th>
-                                                            <th >{{ $montanttatal }}</th>
-                                                            <th  class="d-none d-sm-table-cell" colspan="3"></th>
+                                                            <th></th>
+                                                            <th>{{ number_format($montanttatal, 0, ',', ' ') }}</th>
+                                                            @canany(['Modification de l approvisionnement','Suppression de l approvisionnement'])
+                                                                <th></th>
+                                                            @endcanany
                                                         </tr>
                                                         </tfoot>
                                                     </table>
-                                                    <!-- datatable end -->
+                                                    </div>
+                                                    <div class="stock-mobile-list">
+                                                        @forelse($approvisionnements as $key)
+                                                            @php
+                                                                $montantLigneMobile = $key->quantiteproduitappro * $key->montant;
+                                                            @endphp
+                                                            <article class="stock-mobile-card">
+                                                                <div class="stock-mobile-card-head">
+                                                                    <div>
+                                                                        <p class="stock-mobile-card-title">{{ $key->produit }}</p>
+                                                                        <span class="stock-meta">{{ $key->approvisionnement }}</span>
+                                                                    </div>
+                                                                    @if($key->nombre <= 0)
+                                                                        <span class="stock-badge stock-badge-danger"><i class="fas fa-times-circle"></i> Épuisé</span>
+                                                                    @elseif($key->nombre < $key->quantiteproduitappro)
+                                                                        <span class="stock-badge stock-badge-warning"><i class="fas fa-hourglass-half"></i> Partiel</span>
+                                                                    @else
+                                                                        <span class="stock-badge stock-badge-success"><i class="fas fa-check-circle"></i> Disponible</span>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="stock-mobile-fields">
+                                                                    <div class="stock-mobile-field"><span>Fournisseur</span><strong>{{ $key->fournisseur }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Code</span><strong>{{ $key->code }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Livrée</span><strong>{{ $key->quantiteproduitappro }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Restante</span><strong>{{ $key->nombre }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Prix achat</span><strong>{{ number_format($key->montant, 0, ',', ' ') }} FCFA</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Montant</span><strong>{{ number_format($montantLigneMobile, 0, ',', ' ') }} FCFA</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Date</span><strong>{{ !empty($key->created_at) ? \Carbon\Carbon::parse($key->created_at)->format('d/m/Y') : $key->mois.' '.$key->annee }}</strong></div>
+                                                                </div>
+                                                                @canany(['Modification de l approvisionnement','Suppression de l approvisionnement'])
+                                                                    <div class="stock-mobile-actions">
+                                                                        <button type="button" class="stock-action-btn" title="Voir"
+                                                                                onclick="Swal.fire({title: '{{ addslashes($key->produit) }}', html: 'Fournisseur : {{ addslashes($key->fournisseur) }}<br>Quantité : {{ $key->quantiteproduitappro }}<br>Restante : {{ $key->nombre }}', icon: 'info'})">
+                                                                            <i class="fas fa-eye"></i>
+                                                                        </button>
+                                                                        @can('Modification de l approvisionnement')
+                                                                            <a href="#" class="stock-action-btn btnModifierApprovisionnementsproduit" title="Modifier"
+                                                                               data-id="{{ $key->approvisionnementsproduits_id }}"
+                                                                               data-libelle="{{ $key->produit }}"
+                                                                               data-idproduitsprixachats="{{ $key->produitsprixachats_id }}"
+                                                                               data-idproduits="{{ $key->produits_id }}"
+                                                                               data-quantite="{{ $key->quantiteproduitappro }}"
+                                                                               data-fournisseur="{{ $key->fournisseur }}"
+                                                                               data-approvisionnement="{{ $key->approvisionnement }}"
+                                                                               data-mois="{{ $key->mois }}"
+                                                                               data-annee="{{ $key->annee }}">
+                                                                                <i class="fas fa-pencil-alt"></i>
+                                                                            </a>
+                                                                        @endcan
+                                                                        <button type="button" class="stock-action-btn" title="Imprimer" onclick="window.print()"><i class="fas fa-print"></i></button>
+                                                                        @can('Suppression de l approvisionnement')
+                                                                            <a href="#" class="stock-action-btn stock-action-danger SuppressionApprovisionnementsproduits" title="Supprimer"
+                                                                               data-id="{{ $key->approvisionnementsproduits_id }}"
+                                                                               data-libelle="{{ $key->produit }}"
+                                                                               data-idproduits="{{ $key->produits_id }}"
+                                                                               data-quantite="{{ $key->quantiteproduitappro }}">
+                                                                                <i class="fas fa-trash-alt"></i>
+                                                                            </a>
+                                                                        @endcan
+                                                                    </div>
+                                                                @endcanany
+                                                            </article>
+                                                        @empty
+                                                            <div class="text-muted">Aucun approvisionnement trouvé.</div>
+                                                        @endforelse
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

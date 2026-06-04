@@ -38,56 +38,184 @@
 
                     @include('layouts.heurelocale')
                 </ol>
-                <div class="subheader">
-                    <h1 class="subheader-title">
-                        <i class='subheader-icon fal fa-chart-area'></i> Statistique <span class='fw-300'>Tableau de bord</span>
-                        <small>
-                        </small>
-                    </h1>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div id="panel-5" class="panel">
-                            <div class="panel-hdr">
-                                <h2>Les statistique du mois|{{ $data['mois'].' '.$data['annee'] }}</h2>
-                                <div class="col-md-5 mb-5">
-
-                                    <select id="anneesmois_id" name="anneesmois_id"
-                                            class="form-control select2-4">
-
-                                    </select>
-
-                                </div>
-                            </div>
-                            <div class="panel-container show">
-                                <div class="panel-content">
-                                    <h5>Vente/ du mois en cours</h5>
-
-                                    <div id="flotBar1" style="width: 100%; height: 160px;"></div>
-                                </div>
-                            </div>
-
+                <section class="stock-screen">
+                    <div class="stock-page-title">
+                        <div>
+                            <h1>Tableau de bord</h1>
+                            <p>{{ $data['mois'].' '.$data['annee'] }} · Vue rapide des ventes, stocks et approvisionnements</p>
                         </div>
-                        <div id="panel-6" class="panel">
-                            <div class="panel-hdr">
-                                <h2>statistique des produits vendus/{{ $data['mois'].' '.$data['annee'] }} </h2>
-                            </div>
-                            <div class="panel-container show">
-
-                                <div class="panel-content">
-                                    <div class="row  mb-g">
-                                        <div class="col-md-6 d-flex align-items-center">
-                                            <div id="flotPie" class="w-100" style="height:250px"></div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-5 mr-lg-auto" id="progressContainer">
-                                            <!-- contenu dynamique -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="stock-period-select">
+                            <select id="anneesmois_id" name="anneesmois_id" class="form-control select2-4"></select>
                         </div>
                     </div>
-                </div>
+
+                    <div class="stock-stat-grid">
+                        <article class="stock-stat-card" style="--accent:#2563eb">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Produits</p>
+                                <span class="stock-stat-icon"><i class="fal fa-boxes"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['totalProduits'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">Références enregistrées</span>
+                        </article>
+                        <article class="stock-stat-card" style="--accent:#0f766e">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Stock disponible</p>
+                                <span class="stock-stat-icon"><i class="fal fa-warehouse"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['stockDisponible'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">Unités disponibles</span>
+                        </article>
+                        <article class="stock-stat-card" style="--accent:#d97706">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Alertes stock</p>
+                                <span class="stock-stat-icon"><i class="fal fa-exclamation-triangle"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['produitsAlerte'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">Rupture ou presque rupture</span>
+                        </article>
+                        <article class="stock-stat-card" style="--accent:#7c3aed">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Ventes période</p>
+                                <span class="stock-stat-icon"><i class="fal fa-cash-register"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['ventesPeriode'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">FCFA encaissés</span>
+                        </article>
+                    </div>
+
+                    <div class="stock-stat-grid">
+                        <article class="stock-stat-card" style="--accent:#0891b2">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Aujourd'hui</p>
+                                <span class="stock-stat-icon"><i class="fal fa-calendar-day"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['ventesJour'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">FCFA de ventes</span>
+                        </article>
+                        <article class="stock-stat-card" style="--accent:#16a34a">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Semaine</p>
+                                <span class="stock-stat-icon"><i class="fal fa-calendar-week"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['ventesSemaine'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">FCFA de ventes</span>
+                        </article>
+                        <article class="stock-stat-card" style="--accent:#db2777">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Mois en cours</p>
+                                <span class="stock-stat-icon"><i class="fal fa-calendar-alt"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['ventesMois'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">FCFA de ventes</span>
+                        </article>
+                        <article class="stock-stat-card" style="--accent:#ea580c">
+                            <div class="stock-stat-head">
+                                <p class="stock-stat-label">Approvisionnements</p>
+                                <span class="stock-stat-icon"><i class="fal fa-truck-loading"></i></span>
+                            </div>
+                            <p class="stock-stat-value">{{ number_format($statistiques['approvisionnementsPeriode'], 0, ',', ' ') }}</p>
+                            <span class="stock-stat-note">FCFA sur la période</span>
+                        </article>
+                    </div>
+
+                    <div class="stock-dashboard-grid">
+                        <section class="stock-modern-panel">
+                            <div class="stock-panel-header">
+                                <div>
+                                    <h2>Ventes journalières</h2>
+                                    <span>{{ $data['mois'].' '.$data['annee'] }}</span>
+                                </div>
+                            </div>
+                            <div id="flotBar1" class="stock-chart"></div>
+                        </section>
+
+                        <section class="stock-modern-panel">
+                            <div class="stock-panel-header">
+                                <div>
+                                    <h2>Meilleurs produits</h2>
+                                    <span>Classement par montant vendu</span>
+                                </div>
+                            </div>
+                            <div class="stock-activity-list">
+                                @forelse($meilleursProduits as $produit)
+                                    <div class="stock-list-card">
+                                        <div class="stock-list-title">
+                                            <strong>{{ $produit->produit }}</strong>
+                                            <span>{{ number_format($produit->quantite, 0, ',', ' ') }} vendu(s)</span>
+                                        </div>
+                                        <div class="stock-list-amount">{{ number_format($produit->montant, 0, ',', ' ') }} FCFA</div>
+                                    </div>
+                                @empty
+                                    <div class="text-muted">Aucune vente sur cette période.</div>
+                                @endforelse
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="stock-dashboard-grid">
+                        <section class="stock-modern-panel">
+                            <div class="stock-panel-header">
+                                <div>
+                                    <h2>Répartition des ventes</h2>
+                                    <span>Par produit vendu</span>
+                                </div>
+                            </div>
+                            <div class="row mb-g">
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <div id="flotPie" class="w-100" style="height:250px"></div>
+                                </div>
+                                <div class="col-md-6" id="progressContainer"></div>
+                            </div>
+                        </section>
+
+                        <section class="stock-modern-panel">
+                            <div class="stock-panel-header">
+                                <div>
+                                    <h2>Dernières ventes</h2>
+                                    <span>Mouvements récents</span>
+                                </div>
+                            </div>
+                            <div class="stock-activity-list">
+                                @forelse($dernieresCommandes as $commande)
+                                    <div class="stock-list-card">
+                                        <div class="stock-list-title">
+                                            <strong>{{ $commande->produit }}</strong>
+                                            <span>{{ \Carbon\Carbon::parse($commande->created_at)->format('d/m/Y') }}</span>
+                                        </div>
+                                        <div class="stock-meta">{{ $commande->client }} · {{ $commande->quantite }} unité(s)</div>
+                                        <div class="stock-list-amount">{{ number_format($commande->montant, 0, ',', ' ') }} FCFA</div>
+                                    </div>
+                                @empty
+                                    <div class="text-muted">Aucune vente récente.</div>
+                                @endforelse
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="stock-modern-panel">
+                        <div class="stock-panel-header">
+                            <div>
+                                <h2>Derniers approvisionnements</h2>
+                                <span>Entrées de stock récentes</span>
+                            </div>
+                        </div>
+                        <div class="stock-activity-list">
+                            @forelse($derniersApprovisionnements as $approvisionnement)
+                                <div class="stock-list-card">
+                                    <div class="stock-list-title">
+                                        <strong>{{ $approvisionnement->produit }}</strong>
+                                        <span>{{ \Carbon\Carbon::parse($approvisionnement->created_at)->format('d/m/Y') }}</span>
+                                    </div>
+                                    <div class="stock-meta">{{ $approvisionnement->fournisseur }} · {{ $approvisionnement->quantite }} unité(s)</div>
+                                    <div class="stock-list-amount">{{ number_format($approvisionnement->montant, 0, ',', ' ') }} FCFA</div>
+                                </div>
+                            @empty
+                                <div class="text-muted">Aucun approvisionnement récent.</div>
+                            @endforelse
+                        </div>
+                    </section>
+                </section>
             </main>
             <!-- END Page Content -->
             <!-- this overlay is activated only when mobile menu is triggered -->

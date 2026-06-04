@@ -48,6 +48,7 @@
                     'cl.id as clients_id',
                     'cp.quantite as quantiteproduitcommande',
                     'c.libelle as commande',
+                    'c.created_at',
                     'm.libelle as mois',
                     'a.libelle as annee'
                 )
@@ -82,6 +83,7 @@
                     'cl.id as clients_id',
                     'cp.quantite as quantiteproduitcommande',
                     'c.libelle as commande',
+                    'c.created_at',
                     'm.libelle as mois',
                     'a.libelle as annee'
                 )

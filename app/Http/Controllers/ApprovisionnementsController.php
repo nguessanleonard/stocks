@@ -41,7 +41,9 @@
                 'classe' => 'Connexion',
                 'vue' => 'approvisionnement',
                 'title' => 'Gestion des approvisionnements',
-                'approvisionnements' => Approvisionnement::approvisionnementsfiltrer(),
+                'approvisionnements' => Approvisionnement::approvisionnementsfiltrer($debut, $fin),
+                'date_debut' => $debut,
+                'date_fin' => $fin,
             ];
 
 

@@ -42,6 +42,8 @@
                 'vue' => 'approvisionnement',
                 'title' => 'Gestion des commandes',
                 'commandes' => Commande::commandesFilter($debut, $fin),
+                'date_debut' => $debut,
+                'date_fin' => $fin,
             ];
 
 
