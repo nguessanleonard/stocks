@@ -82,7 +82,7 @@
     height: 2.35rem;
     border-radius: 8px;
     color: var(--accent, #2563eb);
-    background: color-mix(in srgb, var(--accent, #2563eb) 12%, white);
+    background: #f3f7ff;
 }
 
 .stock-stat-value {

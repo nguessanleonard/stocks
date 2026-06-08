@@ -65,6 +65,8 @@
             {{-- ================= ARTICLES ================= --}}
             @php
                 $articlesActive = request()->routeIs([
+                    'articles.*',
+                    'mouvementsarticles.*',
                     'produits.*',
                     'approvisionnements.*',
                     'fournisseurs.*',
@@ -72,7 +74,7 @@
                 ]);
             @endphp
 
-            @canany(['Articles/achats','Produits','Approvisionnements','Fournisseurs','Prix d achat produit'])
+            @canany(['Articles/achats','Produits','Approvisionnements','Fournisseurs','Prix d achat produit','Voir la liste des articles','Voir la liste des mouvements d articles'])
                 <li class="{{ $articlesActive ? 'active open' : '' }}">
                     <a href="#">
                         <i class="fal fa-info-circle"></i>
@@ -80,6 +82,18 @@
                     </a>
 
                     <ul>
+                        @can('Voir la liste des articles')
+                            <li class="{{ request()->routeIs('articles.*') ? 'active' : '' }}">
+                                <a href="{{route('articles.index')}}">Articles magasin</a>
+                            </li>
+                        @endcan
+
+                        @can('Voir la liste des mouvements d articles')
+                            <li class="{{ request()->routeIs('mouvementsarticles.*') ? 'active' : '' }}">
+                                <a href="{{route('mouvementsarticles.index')}}">Mouvements articles</a>
+                            </li>
+                        @endcan
+
                         @can('Produits')
                             <li class="{{ request()->routeIs('produits.*') ? 'active' : '' }}">
                                 <a href="{{route('produits.index')}}">Produits</a>

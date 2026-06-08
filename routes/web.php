@@ -1,12 +1,14 @@
 <?php
 
     use App\Http\Controllers\AdminsController;
+    use App\Http\Controllers\ArticlesController;
     use App\Http\Controllers\ApprovisionnementsController;
     use App\Http\Controllers\ClientsController;
     use App\Http\Controllers\CommandesController;
     use App\Http\Controllers\CompteController;
     use App\Http\Controllers\ConnexionController;
     use App\Http\Controllers\FournisseursController;
+    use App\Http\Controllers\MouvementsarticlesController;
     use App\Http\Controllers\PermissionsController;
     use App\Http\Controllers\ProduitsController;
     use App\Http\Controllers\ProduitsprixachatsController;
@@ -64,6 +66,18 @@
         Route::post('/produits/rechercheCodeorqrcode', [ProduitsController::class, 'rechercheCodeorqrcode'])->name('produits.rechercheCodeorqrcode');
         Route::post('/produits/rechercheCodeorqrcodevente', [ProduitsController::class, 'rechercheCodeorqrcodevente'])->name('produits.rechercheCodeorqrcodevente');
 
+        //Route Articles
+        Route::get('/articles', [ArticlesController::class, 'index'])->name('articles.index');
+        Route::post('/articles/ajouter', [ArticlesController::class, 'ajouter'])->name('articles.ajouter');
+        Route::PUT('/articles/modification/{id}', [ArticlesController::class, 'update'])->name('articles.modification');
+        Route::post('/articles/confirmer-suppression', [ArticlesController::class, 'confirmersuppression'])->name('articles.confirmer-suppression');
+        Route::get('/articles/liste', [ArticlesController::class, 'liste'])->name('articles.liste');
+
+        //Route Mouvements Articles
+        Route::get('/mouvements-articles', [MouvementsarticlesController::class, 'index'])->name('mouvementsarticles.index');
+        Route::get('/mouvements-articles/{id}', [MouvementsarticlesController::class, 'show'])->name('mouvementsarticles.show');
+        Route::post('/mouvements-articles/ajouter', [MouvementsarticlesController::class, 'ajouter'])->name('mouvementsarticles.ajouter');
+        Route::post('/mouvements-articles/confirmer-suppression', [MouvementsarticlesController::class, 'confirmersuppression'])->name('mouvementsarticles.confirmer-suppression');
 
         //Route Produits prix d'achat
         Route::get('/produitsprixachats', [ProduitsprixachatsController::class, 'index'])->name('produitsprixachats.index');

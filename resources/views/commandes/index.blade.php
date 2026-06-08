@@ -965,7 +965,7 @@
                 type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
-                    Clients_id: Client,
+                    clients_id: Client,
                     produits: produits
                 },
                 success: function (response) {
