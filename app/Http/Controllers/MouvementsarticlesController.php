@@ -223,6 +223,12 @@ class MouvementsarticlesController extends Controller
         return array_values($fusion);
     }
 
+    public function liste()
+    {
+        $liste=Mouvement::liste();
+
+       return response()->json($liste);
+    }
     private function genererReference($type)
     {
         $prefix = $type === 'entree' ? 'ENT-ART' : 'SOR-ART';

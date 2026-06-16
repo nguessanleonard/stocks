@@ -51,16 +51,6 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Unité</label>
-                                                        <input type="text" class="form-control" id="unite" name="unite" placeholder="Ex: pièce, carton, paquet">
-                                                    </div>
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Stock minimum</label>
-                                                        <input type="number" min="0" class="form-control" id="stock_minimum" name="stock_minimum" value="0">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">Description</label>
                                                         <textarea class="form-control" id="description" name="description" rows="2" placeholder="Description de l'article"></textarea>
@@ -130,8 +120,7 @@
                                                                                        data-id="{{ $article->id }}"
                                                                                        data-libelle="{{ $article->libelle }}"
                                                                                        data-code="{{ $article->code }}"
-                                                                                       data-unite="{{ $article->unite }}"
-                                                                                       data-stock-minimum="{{ $article->stock_minimum }}"
+
                                                                                        data-description="{{ $article->description }}"
                                                                                        title="Modifier">
                                                                                         <i class="fas fa-pencil-alt"></i>
@@ -183,8 +172,7 @@
                                                                                data-id="{{ $article->id }}"
                                                                                data-libelle="{{ $article->libelle }}"
                                                                                data-code="{{ $article->code }}"
-                                                                               data-unite="{{ $article->unite }}"
-                                                                               data-stock-minimum="{{ $article->stock_minimum }}"
+
                                                                                data-description="{{ $article->description }}"
                                                                                title="Modifier">
                                                                                 <i class="fas fa-pencil-alt"></i>

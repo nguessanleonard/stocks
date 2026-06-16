@@ -77,4 +77,10 @@ class Mouvement extends Model
             ->orderBy('a.libelle')
             ->get();
     }
+
+    public static function liste(){
+        return DB::table('mouvements as m')
+            ->where('m.supprimer', 0)
+            ->get();
+    }
 }

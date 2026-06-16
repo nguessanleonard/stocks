@@ -43,14 +43,8 @@
                                                 <div class="form-row">
                                                     <div class="col-md-4 mb-3">
                                                         <label class="form-label">Type <span class="text-danger">*</span></label>
-                                                        <select id="type" name="type" class="form-control" required>
-                                                            <option value="">Sélectionnez</option>
-                                                            @can('Ajouter une entrée d articles')
-                                                                <option value="entree">Entrée</option>
-                                                            @endcan
-                                                            @can('Ajouter une sortie d articles')
-                                                                <option value="sortie">Sortie</option>
-                                                            @endcan
+                                                        <select id="mouvements_id" name="mouvements_id" class="form-control" required>
+
                                                         </select>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
@@ -369,6 +363,25 @@
                     afficherErreur(xhr);
                 }
             });
+        });
+
+        $.ajax({
+            url: "{{ route('mouvement.liste') }}",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                let selectAjout = $('#mouvements_id');
+
+                selectAjout.empty().append('<option value="">Sélectionnez le type d opération</option>');
+
+                $.each(data, function (key, value) {
+                    selectAjout.append('<option value="' + value.id + '">' + value.libelle + '</option>');
+
+                });
+            },
+            error: function () {
+                console.error("Erreur lors du chargement des Clients.");
+            }
         });
 
         $(document).on('click', '.SuppressionMouvement', function (e) {

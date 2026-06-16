@@ -76,6 +76,7 @@
         //Route Mouvements Articles
         Route::get('/mouvements-articles', [MouvementsarticlesController::class, 'index'])->name('mouvementsarticles.index');
         Route::get('/mouvements-articles/{id}', [MouvementsarticlesController::class, 'show'])->name('mouvementsarticles.show');
+        Route::get('/mouvements/liste', [MouvementsarticlesController::class, 'liste'])->name('mouvement.liste');
         Route::post('/mouvements-articles/ajouter', [MouvementsarticlesController::class, 'ajouter'])->name('mouvementsarticles.ajouter');
         Route::post('/mouvements-articles/confirmer-suppression', [MouvementsarticlesController::class, 'confirmersuppression'])->name('mouvementsarticles.confirmer-suppression');
 
