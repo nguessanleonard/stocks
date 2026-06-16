@@ -18,6 +18,9 @@
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Route;
 
+    use App\Http\Controllers\GithubWebhookController;
+
+    Route::post('/github-webhook', [GithubWebhookController::class, 'deploy']);
     Route::get('/', function () {
         return Auth::check()
             ? redirect()->route('tableaudebord.index')

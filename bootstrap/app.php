@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
+    use Illuminate\Foundation\Application;
+    use Illuminate\Foundation\Configuration\Exceptions;
+    use Illuminate\Foundation\Configuration\Middleware;
+    use Illuminate\Auth\AuthenticationException;
 
     return Application::configure(basePath: dirname(__DIR__))
         ->withRouting(
@@ -11,14 +12,15 @@ use Illuminate\Foundation\Configuration\Middleware;
             health: '/up',
         )
         ->withMiddleware(function (Middleware $middleware): void {
-            //
+            $middleware->validateCsrfTokens(except: [
+                'github-webhook',
+            ]);
         })
         ->withExceptions(function (Exceptions $exceptions): void {
-
-            $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            $exceptions->render(function (AuthenticationException $e, $request) {
                 return $request->expectsJson()
                     ? response()->json(['message' => 'Unauthenticated'], 401)
                     : redirect()->route('login');
             });
-
-        })->create();
+        })
+        ->create();
