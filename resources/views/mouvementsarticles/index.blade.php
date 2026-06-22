@@ -159,8 +159,8 @@
                                                                 <th>Référence</th>
                                                                 <th>Type</th>
                                                                 <th>Date</th>
-                                                                <th>Articles</th>
-                                                                <th>Lignes</th>
+                                                                <th>Article</th>
+                                                                <th>Code</th>
                                                                 <th>Quantité</th>
                                                                 <th>Opérateur</th>
                                                                 <th>Observation</th>
@@ -179,9 +179,9 @@
                                                                         @endif
                                                                     </td>
                                                                     <td>{{ \Carbon\Carbon::parse($mouvement->date_mouvement)->format('d/m/Y') }}</td>
-                                                                    <td>{{ $mouvement->articles }}</td>
-                                                                    <td>{{ $mouvement->nombre_lignes }}</td>
-                                                                    <td><strong>{{ number_format($mouvement->quantite_totale, 0, ',', ' ') }}</strong></td>
+                                                                    <td>{{ $mouvement->article }}</td>
+                                                                    <td>{{ $mouvement->code }}</td>
+                                                                    <td><strong>{{ number_format($mouvement->quantite_affichee, 0, ',', ' ') }} {{ $mouvement->unite }}</strong></td>
                                                                     <td>#{{ $mouvement->userAdd }} · {{ $mouvement->operateur }}</td>
                                                                     <td>{{ $mouvement->observation }}</td>
                                                                     <td>
@@ -222,9 +222,9 @@
                                                                     @endif
                                                                 </div>
                                                                 <div class="stock-mobile-fields">
-                                                                    <div class="stock-mobile-field"><span>Articles</span><strong>{{ $mouvement->articles }}</strong></div>
-                                                                    <div class="stock-mobile-field"><span>Lignes</span><strong>{{ $mouvement->nombre_lignes }}</strong></div>
-                                                                    <div class="stock-mobile-field"><span>Quantité</span><strong>{{ number_format($mouvement->quantite_totale, 0, ',', ' ') }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Article</span><strong>{{ $mouvement->article }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Code</span><strong>{{ $mouvement->code }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Quantité</span><strong>{{ number_format($mouvement->quantite_affichee, 0, ',', ' ') }} {{ $mouvement->unite }}</strong></div>
                                                                     <div class="stock-mobile-field"><span>Opérateur</span><strong>#{{ $mouvement->userAdd }} · {{ $mouvement->operateur }}</strong></div>
                                                                     <div class="stock-mobile-field"><span>Observation</span><strong>{{ $mouvement->observation ?? '-' }}</strong></div>
                                                                 </div>

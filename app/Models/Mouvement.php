@@ -53,20 +53,23 @@ class Mouvement extends Model
             })
             ->select(
                 'm.id',
+                'ma.id as mouvement_article_id',
                 'm.reference',
                 'm.type',
                 'm.date_mouvement',
                 'm.observation',
                 'm.userAdd',
                 'm.created_at',
+                'a.libelle as article',
+                'a.code',
+                'a.unite',
+                'ma.quantite',
                 DB::raw("COALESCE(NULLIF(TRIM(CONCAT(COALESCE(u.nom, ''), ' ', COALESCE(u.prenoms, ''))), ''), u.email, CONCAT('#', m.userAdd), '-') as operateur"),
-                DB::raw('COUNT(ma.id) as nombre_lignes'),
-                DB::raw('SUM(ABS(ma.quantite)) as quantite_totale'),
-                DB::raw("GROUP_CONCAT(a.libelle ORDER BY a.libelle SEPARATOR ', ') as articles")
+                DB::raw('ABS(ma.quantite) as quantite_affichee')
             )
-            ->groupBy('m.id', 'm.reference', 'm.type', 'm.date_mouvement', 'm.observation', 'm.userAdd', 'm.created_at', 'u.nom', 'u.prenoms', 'u.email')
             ->orderBy('m.date_mouvement', 'desc')
             ->orderBy('m.id', 'desc')
+            ->orderBy('ma.id', 'desc')
             ->get();
     }
 
