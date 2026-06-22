@@ -17,5 +17,6 @@
 <link rel="stylesheet" media="screen, print" href="{{asset("assets/css/miscellaneous/jqvmap/jqvmap.bundle.css")}}">
 
 <link rel="stylesheet" media="screen, print" href="{{asset('assets/css/datagrid/datatables/datatables.bundle.css')}}">
+<link rel="stylesheet" media="screen, print" href="{{asset('assets/css/formplugins/select2/select2.bundle.css')}}">
 <link rel="stylesheet" media="screen, print" href="{{asset('assets/css/fa-solid.css')}}">
 <link rel="stylesheet" media="screen, print" href="{{asset('assets/css/stock-mobile-ui.css')}}">

@@ -4,10 +4,12 @@
 
     use App\Models\Anneesmois;
     use App\Models\Approvisionnement;
+    use App\Models\Article;
     use App\Models\Commande;
     use App\Models\Mois;
     use App\Models\Produit;
     use Carbon\Carbon;
+    use Carbon\CarbonPeriod;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\DB;
@@ -163,6 +165,135 @@
             $mois = Anneesmois::annesmois();
 
             return response()->json($mois);
+        }
+
+        public function articles(Request $request)
+        {
+            abort_unless(auth()->user()->can('Voir la liste des articles'), 403);
+
+            $dateDebut = !empty($request->date_debut)
+                ? Carbon::parse($request->date_debut)->startOfDay()
+                : Carbon::now()->startOfMonth();
+
+            $dateFin = !empty($request->date_fin)
+                ? Carbon::parse($request->date_fin)->endOfDay()
+                : Carbon::now()->endOfDay();
+
+            if ($dateFin->lt($dateDebut)) {
+                [$dateDebut, $dateFin] = [$dateFin->copy()->startOfDay(), $dateDebut->copy()->endOfDay()];
+            }
+
+            $articles = Article::articles();
+
+            $mouvementsBase = DB::table('mouvements as m')
+                ->join('mouvementsarticles as ma', 'ma.mouvements_id', '=', 'm.id')
+                ->join('articles as a', 'a.id', '=', 'ma.articles_id')
+                ->leftJoin('users as u', 'u.id', '=', 'm.userAdd')
+                ->where('m.supprimer', 0)
+                ->where('ma.supprimer', 0)
+                ->where('a.supprimer', 0)
+                ->whereBetween('m.date_mouvement', [$dateDebut->toDateString(), $dateFin->toDateString()]);
+
+            $statistiques = [
+                'totalArticles' => $articles->count(),
+                'stockDisponible' => (int) $articles->sum('stock'),
+                'articlesAlerte' => $articles->filter(fn ($article) => (int) $article->stock <= (int) $article->stock_minimum)->count(),
+                'articlesRupture' => $articles->filter(fn ($article) => (int) $article->stock <= 0)->count(),
+                'entreesPeriode' => (int) (clone $mouvementsBase)->sum(DB::raw("CASE WHEN m.type = 'entree' THEN ma.quantite ELSE 0 END")),
+                'sortiesPeriode' => (int) (clone $mouvementsBase)->sum(DB::raw("CASE WHEN m.type = 'sortie' THEN ABS(ma.quantite) ELSE 0 END")),
+                'mouvementsPeriode' => (clone $mouvementsBase)->distinct()->count('m.id'),
+            ];
+
+            $articlesCritiques = $articles
+                ->filter(fn ($article) => (int) $article->stock <= (int) $article->stock_minimum)
+                ->sortBy('stock')
+                ->take(6)
+                ->values();
+
+            if ($articlesCritiques->isEmpty()) {
+                $articlesCritiques = $articles->sortBy('stock')->take(6)->values();
+            }
+
+            $repartitionStock = $articles
+                ->sortByDesc('stock')
+                ->take(8)
+                ->map(fn ($article) => [
+                    'article' => $article->libelle,
+                    'stock' => (int) $article->stock,
+                ])
+                ->values();
+
+            $dernieresOperations = (clone $mouvementsBase)
+                ->select(
+                    'm.reference',
+                    'm.type',
+                    'm.date_mouvement',
+                    'm.userAdd',
+                    'a.libelle as article',
+                    'a.code',
+                    DB::raw('ABS(ma.quantite) as quantite'),
+                    DB::raw("COALESCE(NULLIF(TRIM(CONCAT(COALESCE(u.nom, ''), ' ', COALESCE(u.prenoms, ''))), ''), u.email, CONCAT('#', m.userAdd), '-') as operateur")
+                )
+                ->orderByDesc('m.date_mouvement')
+                ->orderByDesc('m.id')
+                ->limit(8)
+                ->get();
+
+            $topSorties = (clone $mouvementsBase)
+                ->where('m.type', 'sortie')
+                ->selectRaw('a.libelle as article, SUM(ABS(ma.quantite)) as quantite')
+                ->groupBy('a.id', 'a.libelle')
+                ->orderByDesc('quantite')
+                ->limit(5)
+                ->get();
+
+            $topEntrees = (clone $mouvementsBase)
+                ->where('m.type', 'entree')
+                ->selectRaw('a.libelle as article, SUM(ma.quantite) as quantite')
+                ->groupBy('a.id', 'a.libelle')
+                ->orderByDesc('quantite')
+                ->limit(5)
+                ->get();
+
+            $mouvementsParJour = (clone $mouvementsBase)
+                ->selectRaw("DATE(m.date_mouvement) as jour")
+                ->selectRaw("SUM(CASE WHEN m.type = 'entree' THEN ma.quantite ELSE 0 END) as entrees")
+                ->selectRaw("SUM(CASE WHEN m.type = 'sortie' THEN ABS(ma.quantite) ELSE 0 END) as sorties")
+                ->groupBy(DB::raw('DATE(m.date_mouvement)'))
+                ->orderBy('jour')
+                ->get()
+                ->keyBy('jour');
+
+            $chartEntrees = [];
+            $chartSorties = [];
+            $chartLabels = [];
+            $indexJour = 1;
+
+            foreach (CarbonPeriod::create($dateDebut->toDateString(), $dateFin->toDateString()) as $jour) {
+                $key = $jour->format('Y-m-d');
+                $chartLabels[$indexJour] = $jour->format('d/m');
+                $chartEntrees[] = [$indexJour, (int) ($mouvementsParJour[$key]->entrees ?? 0)];
+                $chartSorties[] = [$indexJour, (int) ($mouvementsParJour[$key]->sorties ?? 0)];
+                $indexJour++;
+            }
+
+            $periode = [
+                'date_debut' => $dateDebut->toDateString(),
+                'date_fin' => $dateFin->toDateString(),
+            ];
+
+            return view('tableaudebord.articles', compact(
+                'periode',
+                'statistiques',
+                'articlesCritiques',
+                'repartitionStock',
+                'dernieresOperations',
+                'topSorties',
+                'topEntrees',
+                'chartEntrees',
+                'chartSorties',
+                'chartLabels'
+            ));
         }
 
 

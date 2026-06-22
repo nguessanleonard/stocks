@@ -65,6 +65,7 @@
             {{-- ================= ARTICLES ================= --}}
             @php
                 $articlesActive = request()->routeIs([
+                    'tableaudebord.articles',
                     'articles.*',
                     'mouvementsarticles.*',
                     'produits.*',
@@ -82,6 +83,12 @@
                     </a>
 
                     <ul>
+                        @can('Voir la liste des articles')
+                            <li class="{{ request()->routeIs('tableaudebord.articles') ? 'active' : '' }}">
+                                <a href="{{route('tableaudebord.articles')}}">Tableau de bord articles</a>
+                            </li>
+                        @endcan
+
                         @can('Voir la liste des articles')
                             <li class="{{ request()->routeIs('articles.*') ? 'active' : '' }}">
                                 <a href="{{route('articles.index')}}">Articles magasin</a>

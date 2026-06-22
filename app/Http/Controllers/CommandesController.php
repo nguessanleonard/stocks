@@ -144,14 +144,15 @@
                     'clients_id' => 'nullable|integer',
                     'produits' => 'required|array|min:1',
                     'produits.*.produitsprixventes_id' => 'required|integer',
-                    'produits.*.produits_id' => 'required|integer',
+                    'produits.*.produits_id' => 'required|integer|distinct',
                     'produits.*.quantite' => 'required|integer|min:1',
                     'produits.*.prix' => 'required|numeric'
                 ],
                 [
                     'produits.required' => 'Ajoutez au moins un produit.',
                     'produits.min' => 'Ajoutez au moins un produit.',
-                    'produits.*.quantite.min' => 'La quantité doit être supérieure à 0.'
+                    'produits.*.quantite.min' => 'La quantité doit être supérieure à 0.',
+                    'produits.*.produits_id.distinct' => 'Un produit ne peut pas être sélectionné plusieurs fois dans la même commande.'
                 ]
             );
 

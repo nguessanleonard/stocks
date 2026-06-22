@@ -49,7 +49,7 @@ class MouvementsarticlesController extends Controller
                 'reference' => 'nullable|string|max:255|unique:mouvements,reference',
                 'observation' => 'nullable|string',
                 'articles' => 'required|array|min:1',
-                'articles.*.articles_id' => 'required|integer|exists:articles,id',
+                'articles.*.articles_id' => 'required|integer|exists:articles,id|distinct',
                 'articles.*.quantite' => 'required|integer|min:1',
             ],
             [
@@ -59,6 +59,7 @@ class MouvementsarticlesController extends Controller
                 'articles.required' => 'Ajoutez au moins un article.',
                 'articles.min' => 'Ajoutez au moins un article.',
                 'articles.*.articles_id.required' => 'Sélectionnez un article.',
+                'articles.*.articles_id.distinct' => 'Un article ne peut pas être sélectionné plusieurs fois dans le même mouvement.',
                 'articles.*.quantite.required' => 'Saisissez une quantité.',
                 'articles.*.quantite.min' => 'La quantité doit être supérieure à 0.',
                 'reference.unique' => 'Cette référence existe déjà.',
@@ -134,6 +135,10 @@ class MouvementsarticlesController extends Controller
         abort_unless(auth()->user()->can('Voir le détail d un mouvement'), 403);
 
         $mouvement = Mouvement::where('supprimer', 0)->findOrFail($id);
+        $mouvement->operateur = DB::table('users as u')
+            ->where('u.id', $mouvement->userAdd)
+            ->selectRaw("COALESCE(NULLIF(TRIM(CONCAT(COALESCE(u.nom, ''), ' ', COALESCE(u.prenoms, ''))), ''), u.email, CONCAT('#', u.id), '-') as operateur")
+            ->value('operateur') ?? '-';
 
         $data = [
             'name' => 'Gestion',
@@ -225,7 +230,10 @@ class MouvementsarticlesController extends Controller
 
     public function liste()
     {
-        $liste=Mouvement::liste();
+        $liste = [
+            ['id' => 'entree', 'libelle' => 'Entrée'],
+            ['id' => 'sortie', 'libelle' => 'Sortie'],
+        ];
 
        return response()->json($liste);
     }

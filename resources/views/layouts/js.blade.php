@@ -35,6 +35,24 @@
 
 <script src="{{asset('assets/js/datagrid/datatables/datatables.bundle.js')}}"></script>
 <script src="{{asset('assets/js/datagrid/datatables/datatables.export.js')}}"></script>
+<script src="{{asset('assets/js/formplugins/select2/select2.bundle.js')}}"></script>
 
+<script>
+    $(function () {
+        if (!$.fn.select2) {
+            return;
+        }
 
+        $('.select2-4').each(function () {
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                return;
+            }
 
+            $(this).select2({
+                width: '100%',
+                placeholder: $(this).find('option:first').text(),
+                allowClear: true
+            });
+        });
+    });
+</script>

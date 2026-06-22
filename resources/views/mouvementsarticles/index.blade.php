@@ -43,7 +43,7 @@
                                                 <div class="form-row">
                                                     <div class="col-md-4 mb-3">
                                                         <label class="form-label">Type <span class="text-danger">*</span></label>
-                                                        <select id="mouvements_id" name="mouvements_id" class="form-control" required>
+                                                        <select id="type" name="type" class="form-control select2-4" required>
 
                                                         </select>
                                                     </div>
@@ -54,6 +54,12 @@
                                                     <div class="col-md-4 mb-3">
                                                         <label class="form-label">Référence</label>
                                                         <input type="text" id="reference" name="reference" class="form-control" placeholder="Référence automatique si vide">
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">Opérateur</label>
+                                                        <input type="text" class="form-control" value="#{{ Auth::id() }} - {{ trim((Auth::user()->nom ?? '').' '.(Auth::user()->prenoms ?? '')) ?: Auth::user()->email }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
@@ -156,6 +162,7 @@
                                                                 <th>Articles</th>
                                                                 <th>Lignes</th>
                                                                 <th>Quantité</th>
+                                                                <th>Opérateur</th>
                                                                 <th>Observation</th>
                                                                 <th>Actions</th>
                                                             </tr>
@@ -175,6 +182,7 @@
                                                                     <td>{{ $mouvement->articles }}</td>
                                                                     <td>{{ $mouvement->nombre_lignes }}</td>
                                                                     <td><strong>{{ number_format($mouvement->quantite_totale, 0, ',', ' ') }}</strong></td>
+                                                                    <td>#{{ $mouvement->userAdd }} · {{ $mouvement->operateur }}</td>
                                                                     <td>{{ $mouvement->observation }}</td>
                                                                     <td>
                                                                         <div class="stock-action-group">
@@ -217,6 +225,7 @@
                                                                     <div class="stock-mobile-field"><span>Articles</span><strong>{{ $mouvement->articles }}</strong></div>
                                                                     <div class="stock-mobile-field"><span>Lignes</span><strong>{{ $mouvement->nombre_lignes }}</strong></div>
                                                                     <div class="stock-mobile-field"><span>Quantité</span><strong>{{ number_format($mouvement->quantite_totale, 0, ',', ' ') }}</strong></div>
+                                                                    <div class="stock-mobile-field"><span>Opérateur</span><strong>#{{ $mouvement->userAdd }} · {{ $mouvement->operateur }}</strong></div>
                                                                     <div class="stock-mobile-field"><span>Observation</span><strong>{{ $mouvement->observation ?? '-' }}</strong></div>
                                                                 </div>
                                                                 <div class="stock-mobile-actions">
@@ -278,6 +287,9 @@
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
         });
 
+        let synchronisationArticle = false;
+
+        initSelect2(document);
         ajouterLigne();
 
         $('#btnAjouterLigne').on('click', function () {
@@ -287,14 +299,39 @@
         $(document).on('click', '.btnRetirerLigne', function () {
             const uid = $(this).data('uid');
             $('[data-row="' + uid + '"]').remove();
+            updateArticleSelectOptions();
         });
 
         $(document).on('change', '.article-select', function () {
+            if (synchronisationArticle) {
+                return;
+            }
+
             const uid = $(this).data('uid');
-            const stock = $(this).find(':selected').data('stock') || 0;
+            let stock = $(this).find(':selected').data('stock') || 0;
             const value = $(this).val();
-            $('.article-select[data-uid="' + uid + '"]').val(value);
+
+            if (value && getSelectedArticles(uid).includes(value)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Article déjà sélectionné',
+                    text: 'Cet article est déjà présent sur une autre ligne du mouvement.'
+                });
+
+                stock = 0;
+                synchronisationArticle = true;
+                $('.article-select[data-uid="' + uid + '"]').val('').trigger('change.select2');
+                synchronisationArticle = false;
+                $('.stock-ligne[data-uid="' + uid + '"]').text(stock);
+                updateArticleSelectOptions();
+                return;
+            }
+
+            synchronisationArticle = true;
+            $('.article-select[data-uid="' + uid + '"]').val(value).trigger('change.select2');
+            synchronisationArticle = false;
             $('.stock-ligne[data-uid="' + uid + '"]').text(stock);
+            updateArticleSelectOptions();
         });
 
         $(document).on('input', '.quantite-ligne', function () {
@@ -308,6 +345,7 @@
             let produits = [];
             let valide = true;
             let type = $('#type').val();
+            let articlesSelectionnes = [];
 
             $('.ligne-form:visible').each(function () {
                 let article = $(this).find('.article-select').val();
@@ -318,6 +356,16 @@
                     valide = false;
                 }
 
+                if (article && articlesSelectionnes.includes(article)) {
+                    valide = false;
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Article en double',
+                        text: 'Un même article ne peut pas être présent sur plusieurs lignes.'
+                    });
+                    return false;
+                }
+
                 if (type === 'sortie' && quantite > stock) {
                     valide = false;
                     Swal.fire({
@@ -326,6 +374,10 @@
                         text: 'Une quantité demandée dépasse le stock disponible.'
                     });
                     return false;
+                }
+
+                if (article) {
+                    articlesSelectionnes.push(article);
                 }
 
                 produits.push({
@@ -370,7 +422,7 @@
             type: "GET",
             dataType: "json",
             success: function (data) {
-                let selectAjout = $('#mouvements_id');
+                let selectAjout = $('#type');
 
                 selectAjout.empty().append('<option value="">Sélectionnez le type d opération</option>');
 
@@ -378,6 +430,8 @@
                     selectAjout.append('<option value="' + value.id + '">' + value.libelle + '</option>');
 
                 });
+
+                selectAjout.trigger('change.select2');
             },
             error: function () {
                 console.error("Erreur lors du chargement des Clients.");
@@ -427,7 +481,7 @@
             const desktop = `
                 <tr class="ligne-form" data-row="${uid}">
                     <td>
-                        <select class="form-control article-select" data-uid="${uid}" required>
+                        <select class="form-control select2-4 article-select" data-uid="${uid}" required>
                             <option value="">Sélectionnez l'article</option>
                             ${options}
                         </select>
@@ -447,7 +501,7 @@
                     <div class="stock-mobile-fields">
                         <div class="stock-mobile-field">
                             <span>Article</span>
-                            <select class="form-control article-select" data-uid="${uid}" required>
+                            <select class="form-control select2-4 article-select" data-uid="${uid}" required>
                                 <option value="">Sélectionnez l'article</option>
                                 ${options}
                             </select>
@@ -468,6 +522,69 @@
 
             $('#lignesMouvement').append(desktop);
             $('#lignesMouvementMobile').append(mobile);
+            initSelect2($('[data-row="' + uid + '"] .article-select'));
+            updateArticleSelectOptions();
+        }
+
+        function initSelect2(scope) {
+            if (!$.fn.select2) {
+                return;
+            }
+
+            const $scope = scope && scope.jquery ? scope : $(scope);
+            const $selects = $scope.is('select') ? $scope : $scope.find('select.select2-4');
+
+            $selects.each(function () {
+                if ($(this).hasClass('select2-hidden-accessible')) {
+                    return;
+                }
+
+                $(this).select2({
+                    width: '100%',
+                    placeholder: $(this).find('option:first').text(),
+                    allowClear: true
+                });
+            });
+        }
+
+        function getSelectedArticles(uidIgnore) {
+            const selected = [];
+            const lignesTraitees = {};
+            const uidIgnoreText = uidIgnore ? String(uidIgnore) : null;
+
+            $('.article-select').each(function () {
+                const uid = String($(this).data('uid'));
+
+                if (lignesTraitees[uid] || uid === uidIgnoreText) {
+                    return;
+                }
+
+                const value = $(this).val();
+
+                if (value) {
+                    selected.push(value);
+                }
+
+                lignesTraitees[uid] = true;
+            });
+
+            return selected;
+        }
+
+        function updateArticleSelectOptions() {
+            $('.article-select').each(function () {
+                const $select = $(this);
+                const uid = String($select.data('uid'));
+                const selected = getSelectedArticles(uid);
+
+                $select.find('option').prop('disabled', false);
+
+                selected.forEach(function (value) {
+                    $select.find('option[value="' + value + '"]').prop('disabled', true);
+                });
+
+                $select.trigger('change.select2');
+            });
         }
 
         function afficherErreur(xhr) {

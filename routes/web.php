@@ -34,6 +34,7 @@
 
 
         Route::match(['get', 'post'], '/tableau-de-bord/{anneesmois_id?}', [TableaudebordController::class, 'index'])->name('tableaudebord.index');
+        Route::get('/tableau-de-bord-articles', [TableaudebordController::class, 'articles'])->name('tableaudebord.articles');
 
         Route::get('compte', [CompteController::class, 'index'])->name('compte.index');
         Route::post('/compte/update', [CompteController::class, 'update'])->name('compte.update');

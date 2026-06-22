@@ -33,6 +33,7 @@ class Mouvement extends Model
         return DB::table('mouvements as m')
             ->join('mouvementsarticles as ma', 'ma.mouvements_id', '=', 'm.id')
             ->join('articles as a', 'ma.articles_id', '=', 'a.id')
+            ->leftJoin('users as u', 'u.id', '=', 'm.userAdd')
             ->where('m.supprimer', 0)
             ->where('ma.supprimer', 0)
             ->when(!empty($filters['type']), function ($query) use ($filters) {
@@ -56,12 +57,14 @@ class Mouvement extends Model
                 'm.type',
                 'm.date_mouvement',
                 'm.observation',
+                'm.userAdd',
                 'm.created_at',
+                DB::raw("COALESCE(NULLIF(TRIM(CONCAT(COALESCE(u.nom, ''), ' ', COALESCE(u.prenoms, ''))), ''), u.email, CONCAT('#', m.userAdd), '-') as operateur"),
                 DB::raw('COUNT(ma.id) as nombre_lignes'),
                 DB::raw('SUM(ABS(ma.quantite)) as quantite_totale'),
                 DB::raw("GROUP_CONCAT(a.libelle ORDER BY a.libelle SEPARATOR ', ') as articles")
             )
-            ->groupBy('m.id', 'm.reference', 'm.type', 'm.date_mouvement', 'm.observation', 'm.created_at')
+            ->groupBy('m.id', 'm.reference', 'm.type', 'm.date_mouvement', 'm.observation', 'm.userAdd', 'm.created_at', 'u.nom', 'u.prenoms', 'u.email')
             ->orderBy('m.date_mouvement', 'desc')
             ->orderBy('m.id', 'desc')
             ->get();
@@ -71,9 +74,10 @@ class Mouvement extends Model
     {
         return DB::table('mouvementsarticles as ma')
             ->join('articles as a', 'ma.articles_id', '=', 'a.id')
+            ->leftJoin('users as u', 'u.id', '=', 'ma.userAdd')
             ->where('ma.mouvements_id', $id)
             ->where('ma.supprimer', 0)
-            ->select('ma.*', 'a.libelle as article', 'a.code', 'a.unite')
+            ->select('ma.*', 'a.libelle as article', 'a.code', 'a.unite', DB::raw("COALESCE(NULLIF(TRIM(CONCAT(COALESCE(u.nom, ''), ' ', COALESCE(u.prenoms, ''))), ''), u.email, CONCAT('#', ma.userAdd), '-') as operateur"))
             ->orderBy('a.libelle')
             ->get();
     }
