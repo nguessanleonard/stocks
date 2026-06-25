@@ -15,18 +15,11 @@
     use App\Http\Controllers\ProduitsprixventesController;
     use App\Http\Controllers\RolesController;
     use App\Http\Controllers\TableaudebordController;
-    use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Route;
 
     use App\Http\Controllers\GithubWebhookController;
 
     Route::post('/github-webhook', [GithubWebhookController::class, 'deploy']);
-    Route::get('/', function () {
-        return Auth::check()
-            ? redirect()->route('tableaudebord.index')
-            : redirect()->route('login');
-    });
-
     Route::get('/', [ConnexionController::class, 'login'])->name('login');
     Route::post('/loguser', [ConnexionController::class, 'loguser'])->name('login.loguser');
 

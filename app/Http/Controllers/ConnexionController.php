@@ -20,6 +20,10 @@
 
         public function login()
         {
+            if (Auth::check()) {
+                return redirect()->route('tableaudebord.index');
+            }
+
             $data = array(
                 'name' => 'Gestion ',
                 'classe' => 'Connexion',

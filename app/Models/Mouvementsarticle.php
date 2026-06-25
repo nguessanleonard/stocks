@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Mouvementsarticle extends Model
 {
@@ -23,11 +24,16 @@ class Mouvementsarticle extends Model
 
     public function article()
     {
-        return $this->belongsTo(Article::class, 'articles_id');
+        return DB::table('articles  as ar')
+            ->select('ar.*')
+            ->get();
+
     }
 
     public function mouvement()
     {
-        return $this->belongsTo(Mouvement::class, 'mouvements_id');
+        return DB::table('mouvements  as mvs')
+            ->select('mvs.*')
+            ->get();
     }
 }
