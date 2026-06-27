@@ -35,7 +35,7 @@
                                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
                                 </div>
                             </div>
-                            @canany(['Ajouter une entrée d articles','Ajouter une sortie d articles'])
+                            @canany(['Ajouter une entrée d articles','Ajouter une entrée d articles'])
                                 <div class="panel-container show">
                                     <div class="panel-content p-0">
                                         <form id="formAjoutMouvement">
@@ -145,6 +145,14 @@
                                                                     <label>Référence</label>
                                                                     <input type="text" name="reference" value="{{ $filters['reference'] ?? '' }}" class="form-control" placeholder="Référence">
                                                                 </div>
+                                                                <div class="col-md-1">
+                                                                    <label>Lignes</label>
+                                                                    <select name="per_page" class="form-control">
+                                                                        @foreach([25, 50, 100] as $value)
+                                                                            <option value="{{ $value }}" {{ (int) $perPage === $value ? 'selected' : '' }}>{{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
                                                                 <div class="col-md-1 d-flex align-items-end">
                                                                     <button type="submit" class="btn btn-primary">Filtrer</button>
                                                                 </div>
@@ -247,6 +255,10 @@
                                                         @empty
                                                             <div class="text-muted">Aucun mouvement trouvé.</div>
                                                         @endforelse
+                                                    </div>
+
+                                                    <div class="px-3 pb-3">
+                                                        {{ $mouvements->links() }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -607,6 +619,9 @@
 
         $('#dt-basic-example').dataTable({
             responsive: true,
+            paging: false,
+            info: false,
+            ordering: false,
             lengthChange: false,
             dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
                 "<'row'<'col-sm-12'tr>>" +

@@ -28,7 +28,7 @@ class Mouvement extends Model
         return $this->hasMany(Mouvementsarticle::class, 'mouvements_id');
     }
 
-    public static function mouvements($filters = [])
+    public static function mouvements($filters = [], $perPage = 50)
     {
         return DB::table('mouvements as m')
             ->join('mouvementsarticles as ma', 'ma.mouvements_id', '=', 'm.id')
@@ -70,7 +70,8 @@ class Mouvement extends Model
             ->orderBy('m.date_mouvement', 'desc')
             ->orderBy('m.id', 'desc')
             ->orderBy('ma.id', 'desc')
-            ->get();
+            ->simplePaginate($perPage)
+            ->withQueryString();
     }
 
     public static function detail($id)

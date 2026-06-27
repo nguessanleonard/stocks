@@ -18,6 +18,9 @@ class MouvementsarticlesController extends Controller
     {
         abort_unless(auth()->user()->can('Voir la liste des mouvements d articles'), 403);
 
+        $perPage = (int) $request->input('per_page', 50);
+        $perPage = in_array($perPage, [25, 50, 100], true) ? $perPage : 50;
+
         $filters = [
             'type' => $request->type,
             'date_debut' => $request->date_debut,
@@ -32,8 +35,9 @@ class MouvementsarticlesController extends Controller
             'vue' => 'mouvementsarticles',
             'title' => 'Mouvements des articles',
             'articles' => Article::articles(),
-            'mouvements' => Mouvement::mouvements($filters),
+            'mouvements' => Mouvement::mouvements($filters, $perPage),
             'filters' => $filters,
+            'perPage' => $perPage,
         ];
 
         return view('mouvementsarticles.index', $data);
